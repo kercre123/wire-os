@@ -10,10 +10,12 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/kercre123/wire-os/pkg/vars"
 )
 
 const (
-	PassphraseFile = "./certs/ota.pas"
+	PassphraseFile = "./resources/certs/ota.pas"
 )
 
 func DecryptBytes(in []byte) ([]byte, error) {
@@ -78,7 +80,8 @@ func MountImage(image string, path string) error {
 	return nil
 }
 
-func MountOTA(image string) error {
+func MountOTA(version vars.Version) error {
+	image := "./store/" + version.Full + ".ota"
 	system, err := GetOTASystem(image)
 	if err != nil {
 		return err

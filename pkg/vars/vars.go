@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 )
 
 const (
@@ -37,6 +38,8 @@ type DownloadInfo struct {
 // used for runtime, gets loaded in at start of program
 var DownloadsInfo []DownloadInfo
 
+var PatchLoggerName string = ""
+
 func InitDownloadManager() {
 	downloads, err := os.Open(DownloadsJson)
 	if err != nil {
@@ -55,8 +58,7 @@ func InitDownloadManager() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println("Successfully loaded downloads JSON, listing:")
-	fmt.Println(DownloadsInfo)
+	fmt.Println("Successfully loaded downloads JSON")
 }
 
 func WriteJson(data any, filepath string) error {
@@ -70,4 +72,15 @@ func WriteJson(data any, filepath string) error {
 		return err
 	}
 	return nil
+}
+
+func PatchLogger(message ...any) {
+	fmt.Println("[" + PatchLoggerName + "] " + fmt.Sprint(message...))
+}
+
+func IsMounted() bool {
+	file, err := os.Open("./work/build.prop")
+	file.Close()
+	exec.Command("sync").Run()
+	return err == nil
 }

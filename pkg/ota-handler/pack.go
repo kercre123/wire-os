@@ -2,13 +2,17 @@ package handler
 
 import (
 	"archive/tar"
+	"bufio"
 	"bytes"
 	"compress/gzip"
 	"errors"
 	"fmt"
 	"os"
 	"os/exec"
+	"strconv"
+	"strings"
 
+	manager "github.com/kercre123/wire-os/pkg/download-manager"
 	"github.com/kercre123/wire-os/pkg/vars"
 )
 
@@ -59,7 +63,7 @@ func PackTar(systembytes []byte, target int, manifest []byte, version vars.Versi
 	if target > 3 || target < 0 {
 		return errors.New("target out of range, must be between 1 and 3")
 	}
-	bootbytes, err := os.ReadFile("./boots/" + vars.Targets[target] + ".img.gz")
+	bootbytes, err := os.ReadFile("./resources/boots/" + vars.Targets[target] + ".img.gz")
 	if err != nil {
 		return err
 	}
@@ -87,7 +91,7 @@ func PackTar(systembytes []byte, target int, manifest []byte, version vars.Versi
 	if err != nil {
 		return err
 	}
-	tarFile.Write(systembytes)
+	tarFile.Write(bootbytes)
 	if err != nil {
 		return err
 	}
@@ -115,12 +119,53 @@ func PackTar(systembytes []byte, target int, manifest []byte, version vars.Versi
 	return nil
 }
 
-func PackOTA(version vars.Version, target int) error {
-	if target > 3 || target < 0 {
-		return errors.New("target out of range, must be between 1 and 3")
+// version and target will be picked out from OTA contents
+func PackOTA() error {
+	var target int
+	if !vars.IsMounted() {
+		err := MountImage("./tmp/apq8009-robot-sysfs.img", "./work")
+		if err != nil {
+			return errors.New("image wasn't mounted, failure upon trying to mount")
+		}
 	}
+	// get version from build.prop
+	prop, err := os.Open("./work/build.prop")
+	if err != nil {
+		return err
+	}
+	scanner := bufio.NewScanner(prop)
+	scanner.Split(bufio.ScanLines)
+	matchedVer := false
+	matchedTarget := false
+	var version vars.Version
+	for scanner.Scan() {
+		text := scanner.Text()
+		if strings.Contains(text, "ro.anki.victor.version") {
+			matchedVer = true
+			ver := strings.Split(text, "=")[1]
+			version, err = manager.SplitVersion(ver)
+			if err != nil {
+				return err
+			}
+		}
+		if strings.Contains(text, "ro.build.target") {
+			matchedTarget = true
+			target, err = strconv.Atoi(strings.Split(text, "=")[1])
+			if err != nil {
+				return err
+			}
+		}
+	}
+	if !matchedVer {
+		return errors.New("version not in build.prop")
+	}
+	if !matchedTarget {
+		return errors.New("target not found in build.prop, you must run patcher")
+	}
+	fmt.Println("Found version " + version.Full + " with target " + vars.Targets[target])
+	prop.Close()
 	fmt.Println("Unmounting image...")
-	err := UnmountImage("./work")
+	err = UnmountImage("./work")
 	if err != nil {
 		return err
 	}

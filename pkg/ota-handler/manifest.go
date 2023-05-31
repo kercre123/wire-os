@@ -76,12 +76,21 @@ func FindImageLength(image string) string {
 }
 
 func FindImageHash(image string) string {
-	file, _ := os.Open(image)
+	filename := os.TempDir() + "apq8009-robot-sysfs.img"
+	file, _ := os.ReadFile(image)
+	fmt.Println("[FindImageHash] Compressing...")
+	compressed, _ := CompressBytes(file)
+	fmt.Println("[FindImageHash] Decompressing...")
+	decompressed, _ := DecompressBytes(compressed)
+	os.WriteFile(filename, decompressed, 0777)
+	fmt.Println("[FindImageHash] Finding hash of system image...")
+	finalfile, _ := os.Open(filename)
 	h := sha256.New()
-	if _, err := io.Copy(h, file); err != nil {
+	if _, err := io.Copy(h, finalfile); err != nil {
 		fmt.Println("error getting hash")
 		return ""
 	}
+	os.Remove(filename)
 	return hex.EncodeToString(h.Sum(nil))
 }
 
