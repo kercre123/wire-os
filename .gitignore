@@ -1,0 +1,4 @@
+/store/*.ota
+/out/*.ota
+/tmp/*.img
+/json/downloads.json
