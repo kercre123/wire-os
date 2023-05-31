@@ -27,4 +27,29 @@ var WireOSPatches []OTAPatch = []OTAPatch{
 		Description: "Switches server env to prod.",
 		Patch:       patches.ProdServerEnv,
 	},
+	{
+		Name:        "AddNano",
+		Description: "Adds nano, a text editor, to the filesystem.",
+		Patch:       patches.AddNano,
+	},
+	{
+		Name:        "AddRsync",
+		Description: "Adds rsync, which is helpful for data transfer, to the filesystem.",
+		Patch:       patches.AddRsync,
+	},
+	{
+		Name:        "UpCPUFreq",
+		Description: "Increases the CPU and RAM frequency a bit.",
+		Patch:       patches.UpCPUFreq,
+	},
+	{
+		Name:        "AddCustomBootAnim",
+		Description: "Adds a custom boot animation.",
+		Patch:       patches.AddCustomBootAnim,
+	},
+	{
+		Name:        "CustomUpdateEngine",
+		Description: "Adds a custom update engine, which can download OTAs produced by this tool.",
+		Patch:       patches.CustomUpdateEngine,
+	},
 }

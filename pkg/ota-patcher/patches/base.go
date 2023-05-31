@@ -12,7 +12,8 @@ import (
 )
 
 const (
-	WorkPath = "./work/"
+	WorkPath    = "./work/"
+	PluginsPath = "./resources/patches/"
 )
 
 var ProdServerConfig string = `{
@@ -27,7 +28,6 @@ var ProdServerConfig string = `{
 
 func AddVersion(version vars.Version, target int) error {
 	// revision will eventually be hooked up to github commit
-	vars.PatchLoggerName = "AddVersion"
 	vars.PatchLogger("Modifying build.prop file")
 	// read prop in OTA
 	var propLines []string
@@ -94,14 +94,13 @@ PRETTY_NAME="msm ` + formattedTime + `"
 	os.WriteFile(WorkPath+"etc/os-version-base", []byte(version.Base+"\n"), 0755)
 	os.WriteFile(WorkPath+"etc/os-version-code", []byte(version.Increment+"\n"), 0755)
 	os.WriteFile(WorkPath+"etc/os-version-rev", []byte("wireos\n"), 0755)
-	vars.PatchLogger("anki/etc")
+	vars.PatchLogger("/anki/etc")
 	os.WriteFile(WorkPath+"anki/etc/version", []byte(version.Full+"\n"), 0755)
 	os.WriteFile(WorkPath+"anki/etc/revision", []byte("wire-os\n"), 0755)
 	return nil
 }
 
 func AddCorrectKernelModules(version vars.Version, target int) error {
-	vars.PatchLoggerName = "AddCorrectKernelModules"
 	vars.PatchLogger("Replacing kernel modules with ones matching target: " + vars.Targets[target])
 	moduleIf := "./resources/kernmods/" + vars.Targets[target] + "/modules"
 	moduleOut := WorkPath + "usr/lib/modules"
@@ -117,7 +116,6 @@ func AddCorrectKernelModules(version vars.Version, target int) error {
 }
 
 func ProdServerEnv(version vars.Version, target int) error {
-	vars.PatchLoggerName = "ProdServerEnv"
 	vars.PatchLogger("Setting server env to prod")
 	configPath := WorkPath + "anki/data/assets/cozmo_resources/config/server_config.json"
 	_, err := os.ReadFile(configPath)

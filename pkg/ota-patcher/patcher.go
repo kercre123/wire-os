@@ -16,6 +16,7 @@ func RunPatches(version vars.Version, target int) error {
 	}
 	for _, patch := range WireOSPatches {
 		fmt.Println("Running: " + patch.Name + " (" + patch.Description + ")")
+		vars.PatchLoggerName = patch.Name
 		err := patch.Patch(version, target)
 		if err != nil {
 			return err
