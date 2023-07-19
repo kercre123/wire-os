@@ -20,3 +20,9 @@ Targets: 0 = dev, 1 = whiskey, 2 = oskr, 3 = orange
 ```
 
 -	This program is what will replace what is currently known as WireOS.
+
+## OTA links:
+
+-	http://ota.global.anki-dev-services.com/vic/master-dev/lo8awreh23498sf/full/
+-	https://ota-cdn.anki.com/vic/dev/werih2382df23ij/full/
+-	https://assets.digitaldreamlabs.com/vic/ufxTn3XGcVNK2YrF/master/dev/vicos-
