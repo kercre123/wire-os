@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Mods</title>
+</head>
+<body>
+	<h1>FreqChange</h1>
+	<form id="freqChangeForm">
+		<input type="number" id="freq" name="freq" min="0" max="2">
+		<button type="submit">Apply</button>
+	</form>
+	<script>
+		document.getElementById('freqChangeForm').addEventListener('submit', function(event) {
+			event.preventDefault();
+			var freq = document.getElementById('freq').value;
+			fetch('/api/mods/modify/FreqChange', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: `{"freq": ` + freq + `}`,
+			}).then(response => response.json()).then(data => console.log(data));
+		});
+	</script>
+</body>
+</html>

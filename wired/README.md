@@ -1,13 +1,21 @@
-# wired
+## impl
 
--	Will be the manager of the custom settings in WireOS.
--	Current status:
-	-	Modifier system in place
-		-	Apply, Remove, Init functions for each modifier, can be modified dynamically
-	-	Two modifiers implemented
-		-	HigherPerformance
-		-	NoSnore
-	-	Just a debug shell for now, eventually there will be a web UI with wire-pod CSS
-	-	Build system in place
-		-	Current golang:buster container is broken for armel, decided to go with a stretch archive image instead
-		-	Runs natively in his filesystem as armel, this prorgram doesn't really need the benefits of armhf
+program must do the following:
+
+-	Run a webserver
+-	This server has options
+	-	Example options:
+		1.	freqchange: max, balanced, reg
+		2.	behavior modifiers
+			-	would edit the victor behavior tree files
+		3.	toggle rainbow lights
+		4.	easy "features" interface
+-	These will be applied to the filesystem
+-	These options need init functions
+-	wired will run at boot, as multi-user.target
+	-	if modifications not made to filesystem, it will do it
+-	modifications must be able to be saved and loaded
+
+ideas of how:
+
+-	create functions which apply the mods, each with a way to reset to default

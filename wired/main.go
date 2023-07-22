@@ -1,70 +1,110 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"strconv"
+	"io"
+	"net/http"
 	"strings"
 
-	"github.com/kercre123/wire-os/wired/pkg/modify"
-	"github.com/kercre123/wire-os/wired/pkg/vars"
+	"github.com/kercre123/wire-os/wired/mods"
+	"github.com/kercre123/wire-os/wired/vars"
 )
 
-func main() {
-	// set modifiers to wireos
-	vars.Modifiers = modify.WireOSModifiers
+var EnabledMods []vars.Modification = []vars.Modification{
+	mods.NewFreqChange(),
+}
 
-	fmt.Println("wire_d running, running init functions")
-	vars.Init()
-	fmt.Println("starting shell (debug)")
+type HTTPStatus struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+}
+
+func HTTPSuccess(w http.ResponseWriter, r *http.Request) {
+	var status HTTPStatus
+	status.Status = "success"
+	successBytes, _ := json.Marshal(status)
+	w.Write(successBytes)
+}
+
+func HTTPError(w http.ResponseWriter, r *http.Request, err string) {
+	var status HTTPStatus
+	status.Status = "error"
+	status.Message = err
+	errorBytes, _ := json.Marshal(status)
+	w.Write(errorBytes)
+}
+
+func ModHandler(w http.ResponseWriter, r *http.Request) {
+	switch {
+	case strings.HasPrefix(r.URL.Path, "/api/mods/modify/"):
+		modFromURL := strings.TrimSpace(strings.TrimPrefix(r.URL.Path, "/api/mods/modify/"))
+		jsonFromReq, err := io.ReadAll(r.Body)
+		fmt.Println(string(jsonFromReq))
+		if err != nil {
+			HTTPError(w, r, "error reading request body: "+err.Error())
+			return
+		}
+		mod, err := vars.FindMod(modFromURL)
+		if err != nil {
+			HTTPError(w, r, "mod does not exist")
+			return
+		}
+		err = mod.Do(vars.SysRoot, string(jsonFromReq))
+		if err != nil {
+			HTTPError(w, r, "error running mod: "+err.Error())
+			return
+		}
+		HTTPSuccess(w, r)
+	default:
+		HTTPError(w, r, "404 not found")
+	}
+}
+
+func main() {
+	vars.EnabledMods = EnabledMods
+	vars.InitMods()
+	startweb()
+}
+
+func startweb() {
+	fmt.Println("starting web at port 8081")
+	http.Handle("/", http.FileServer(http.Dir("./webroot")))
+	http.HandleFunc("/api/mods/modify/", ModHandler)
+	http.ListenAndServe(":8081", nil)
+}
+
+func startshell() {
+	fmt.Println("starting shell")
 	for {
-		fmt.Printf("\nEnter a command: ")
-		var command string
-		fmt.Scanln(&command)
+		fmt.Printf("\n#~ ")
+		var in string
+		fmt.Scanln(&in)
 		switch {
-		case strings.Contains(command, "list"):
-			fmt.Println(strings.TrimSpace(string(modify.GetAllModifiers())))
-		case strings.Contains(command, "apply"):
-			fmt.Println("")
-			fmt.Println("All modifiers:")
-			for ind, mod := range vars.Modifiers {
-				fmt.Println(fmt.Sprint(ind) + ": " + mod.Name + " (" + mod.Description + ")")
+		case in == "list":
+			for _, mod := range EnabledMods {
+				fmt.Println("")
+				fmt.Println(mod.Name())
+				fmt.Println(mod.Description())
+				fmt.Println(mod.Accepts())
+				fmt.Println("")
 			}
-			fmt.Println("For reference, modifiers in loaded modifiers file:")
-			for _, mod := range vars.LoadedModifiers {
-				fmt.Println(fmt.Sprint(mod.ModifierID) + ": " + vars.Modifiers[mod.ModifierID].Name + " (Applied: " + fmt.Sprint(mod.Applied) + ")")
-			}
-			fmt.Printf("\nWhich modifier would you like to apply? (ex. 0): ")
-			var modApply string
-			fmt.Scanln(&modApply)
-			modID, err := strconv.Atoi(modApply)
-			if err != nil {
-				fmt.Println("Given value was not an int")
-				continue
-			}
-			err = modify.ApplyModifier(modID)
+		case in == "find":
+			var find string
+			fmt.Println("which mod would you like to find? ")
+			fmt.Printf("Name: ")
+			fmt.Scanln(&find)
+			mod, err := vars.FindMod(find)
 			if err != nil {
 				fmt.Println(err)
 				continue
 			}
-		case strings.Contains(command, "remove"):
-			fmt.Println("")
-			fmt.Println("All modifiers:")
-			for ind, mod := range vars.Modifiers {
-				fmt.Println(fmt.Sprint(ind) + ": " + mod.Name + " (" + mod.Description + ")")
-			}
-			fmt.Println("For reference, modifiers in loaded modifiers file:")
-			for _, mod := range vars.LoadedModifiers {
-				fmt.Println(fmt.Sprint(mod.ModifierID) + ": " + vars.Modifiers[mod.ModifierID].Name + " (Applied: " + fmt.Sprint(mod.Applied) + ")")
-			}
-			fmt.Printf("\nWhich modifier would you like to remove? (ex. 0): ")
-			var modRemove string
-			fmt.Scanln(&modRemove)
-			modID, err := strconv.Atoi(modRemove)
-			if err != nil {
-				fmt.Println("Given value was not an int")
-				continue
-			}
-			err = modify.RemoveModifier(modID)
+			fmt.Println(mod.Name() + " found")
+			fmt.Println("Enter a JSON input for Do()")
+			fmt.Printf("Input: ")
+			var doinput string
+			fmt.Scanln(&doinput)
+			err = mod.Do("/", doinput)
 			if err != nil {
 				fmt.Println(err)
 				continue
