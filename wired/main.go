@@ -40,7 +40,6 @@ func ModHandler(w http.ResponseWriter, r *http.Request) {
 	case strings.HasPrefix(r.URL.Path, "/api/mods/modify/"):
 		modFromURL := strings.TrimSpace(strings.TrimPrefix(r.URL.Path, "/api/mods/modify/"))
 		jsonFromReq, err := io.ReadAll(r.Body)
-		fmt.Println(string(jsonFromReq))
 		if err != nil {
 			HTTPError(w, r, "error reading request body: "+err.Error())
 			return
@@ -56,6 +55,14 @@ func ModHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		HTTPSuccess(w, r)
+	case strings.HasPrefix(r.URL.Path, "/api/mods/current/"):
+		modFromURL := strings.TrimSpace(strings.TrimPrefix(r.URL.Path, "/api/mods/current/"))
+		mod, err := vars.FindMod(modFromURL)
+		if err != nil {
+			HTTPError(w, r, "mod does not exist")
+			return
+		}
+		fmt.Fprint(w, mod.Current())
 	default:
 		HTTPError(w, r, "404 not found")
 	}
@@ -71,6 +78,7 @@ func startweb() {
 	fmt.Println("starting web at port 8081")
 	http.Handle("/", http.FileServer(http.Dir("./webroot")))
 	http.HandleFunc("/api/mods/modify/", ModHandler)
+	http.HandleFunc("/api/mods/current/", ModHandler)
 	http.ListenAndServe(":8081", nil)
 }
 

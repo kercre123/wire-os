@@ -2,6 +2,7 @@ package vars
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 )
 
@@ -19,6 +20,8 @@ type Modification interface {
 	Save(string, string) error
 	// note: Load() runs at init of program
 	Load() error
+	// current settings of mod
+	Current() string
 	Do(string, string) error
 }
 
@@ -40,6 +43,7 @@ func FindMod(name string) (Modification, error) {
 
 func InitMods() {
 	for _, mod := range EnabledMods {
+		fmt.Println("Loading " + mod.Name() + "...")
 		mod.Load()
 	}
 }

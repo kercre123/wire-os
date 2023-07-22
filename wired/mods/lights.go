@@ -10,37 +10,35 @@ import (
 	"github.com/kercre123/wire-os/wired/vars"
 )
 
-type FreqChange struct {
+type LightsMod struct {
 	vars.Modification
 }
 
-func NewFreqChange() *FreqChange {
-	return &FreqChange{}
+func NewLightsMod() *LightsMod {
+	return &LightsMod{}
 }
 
-var FreqChange_Current FreqChange_AcceptJSON
-
-type FreqChange_AcceptJSON struct {
+type LightsMod_AcceptJSON struct {
 	Freq int `json:"freq"`
 }
 
-func (fc *FreqChange) Name() string {
-	return "FreqChange"
+func (fc *LightsMod) Name() string {
+	return "LightsMod"
 }
 
-func (fc *FreqChange) Description() string {
+func (fc *LightsMod) Description() string {
 	return "Modifies CPU/RAM frequency for faster operation."
 }
 
-func (fc *FreqChange) DefaultJSON() any {
-	return FreqChange_AcceptJSON{
+func (fc *LightsMod) DefaultJSON() any {
+	return LightsMod_AcceptJSON{
 		// default is balanced
 		Freq: 1,
 	}
 }
 
-func (fc *FreqChange) Save(where string, in string) error {
-	fcin, ok := fc.DefaultJSON().(FreqChange_AcceptJSON)
+func (fc *LightsMod) Save(where string, in string) error {
+	fcin, ok := fc.DefaultJSON().(LightsMod_AcceptJSON)
 	if !ok {
 		return errors.New("internal mod error: Save(), DefaultJSON not correct type")
 	}
@@ -54,8 +52,8 @@ func (fc *FreqChange) Save(where string, in string) error {
 	return nil
 }
 
-func (fc *FreqChange) Load() error {
-	fcin, ok := fc.DefaultJSON().(FreqChange_AcceptJSON)
+func (fc *LightsMod) Load() error {
+	fcin, ok := fc.DefaultJSON().(LightsMod_AcceptJSON)
 	if !ok {
 		return errors.New("internal mod error: Load(), DefaultJSON not correct type")
 	}
@@ -67,15 +65,14 @@ func (fc *FreqChange) Load() error {
 	}
 	json.Unmarshal(file, &fcin)
 	doJson, _ := json.Marshal(fcin)
-	FreqChange_Current.Freq = fcin.Freq
 	fc.Do("/", string(doJson))
 	return nil
 }
 
-func (fc *FreqChange) Accepts() string {
-	str, ok := fc.DefaultJSON().(FreqChange_AcceptJSON)
+func (fc *LightsMod) Accepts() string {
+	str, ok := fc.DefaultJSON().(LightsMod_AcceptJSON)
 	if !ok {
-		log.Fatal("FreqChange Accepts(): not correct type")
+		log.Fatal("LightsMod Accepts(): not correct type")
 	}
 	marshedJson, err := json.Marshal(str)
 	if err != nil {
@@ -84,13 +81,8 @@ func (fc *FreqChange) Accepts() string {
 	return string(marshedJson)
 }
 
-func (fc *FreqChange) Current() string {
-	marshalled, _ := json.Marshal(FreqChange_Current)
-	return string(marshalled)
-}
-
-func (fc *FreqChange) Do(where string, in string) error {
-	fcin, ok := fc.DefaultJSON().(FreqChange_AcceptJSON)
+func (fc *LightsMod) Do(where string, in string) error {
+	fcin, ok := fc.DefaultJSON().(LightsMod_AcceptJSON)
 	if !ok {
 		return errors.New("internal mod error: Do(), DefaultJSON not correct type")
 	}
@@ -98,6 +90,7 @@ func (fc *FreqChange) Do(where string, in string) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println(fcin.Freq)
 	freq := fcin.Freq
 	if freq < 0 || freq > 2 {
 		return errors.New("freq must be between 0 and 2")
@@ -121,6 +114,5 @@ func (fc *FreqChange) Do(where string, in string) error {
 	}
 	fmt.Println(cpufreq + " " + ramfreq + " " + gov)
 	fc.Save(where, in)
-	FreqChange_Current.Freq = freq
 	return nil
 }
