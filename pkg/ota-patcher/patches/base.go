@@ -129,3 +129,13 @@ func ProdServerEnv(version vars.Version, target int) error {
 	}
 	return nil
 }
+
+func MakeSysrootRW(version vars.Version, target int) error {
+	vars.PatchLogger("Copying fstab")
+	os.Remove(WorkPath + "etc/fstab")
+	err := cp.Copy("./resources/patches/MakeSysrootRW/fstab", WorkPath+"etc/fstab")
+	if err != nil {
+		return err
+	}
+	return nil
+}

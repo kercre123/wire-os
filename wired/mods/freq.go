@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 
 	"github.com/kercre123/wire-os/wired/vars"
 )
@@ -24,56 +25,64 @@ type FreqChange_AcceptJSON struct {
 	Freq int `json:"freq"`
 }
 
-func (fc *FreqChange) Name() string {
+func (modu *FreqChange) Name() string {
 	return "FreqChange"
 }
 
-func (fc *FreqChange) Description() string {
+func (modu *FreqChange) Description() string {
 	return "Modifies CPU/RAM frequency for faster operation."
 }
 
-func (fc *FreqChange) DefaultJSON() any {
+func (modu *FreqChange) RestartRequired() bool {
+	return false
+}
+
+func (modu *FreqChange) DefaultJSON() any {
 	return FreqChange_AcceptJSON{
 		// default is balanced
 		Freq: 1,
 	}
 }
 
-func (fc *FreqChange) Save(where string, in string) error {
-	fcin, ok := fc.DefaultJSON().(FreqChange_AcceptJSON)
+func (modu *FreqChange) ToFS(to string) {
+	// nothing
+}
+
+func (modu *FreqChange) Save(where string, in string) error {
+	moduin, ok := modu.DefaultJSON().(FreqChange_AcceptJSON)
 	if !ok {
 		return errors.New("internal mod error: Save(), DefaultJSON not correct type")
 	}
-	json.Unmarshal([]byte(in), &fcin)
-	saveJson, err := json.Marshal(fcin)
+	json.Unmarshal([]byte(in), &moduin)
+	saveJson, err := json.Marshal(moduin)
 	if err != nil {
 		return err
 	}
-	os.MkdirAll(vars.GetModDir(fc, where), 0777)
-	os.WriteFile(vars.GetModDir(fc, where)+"/saved.json", saveJson, 0777)
+	os.MkdirAll(vars.GetModDir(modu, where), 0777)
+	os.WriteFile(vars.GetModDir(modu, where)+"saved.json", saveJson, 0777)
 	return nil
 }
 
-func (fc *FreqChange) Load() error {
-	fcin, ok := fc.DefaultJSON().(FreqChange_AcceptJSON)
+func (modu *FreqChange) Load() error {
+	moduin, ok := modu.DefaultJSON().(FreqChange_AcceptJSON)
 	if !ok {
 		return errors.New("internal mod error: Load(), DefaultJSON not correct type")
 	}
-	file, err := os.ReadFile(vars.GetModDir(fc, "/") + "/saved.json")
+	file, err := os.ReadFile(vars.GetModDir(modu, "/") + "saved.json")
 	if err != nil {
-		defaultJson, _ := json.Marshal(fcin)
-		fc.Do("/", string(defaultJson))
+		defaultJson, _ := json.Marshal(moduin)
+		modu.Do("/", string(defaultJson))
 		return nil
 	}
-	json.Unmarshal(file, &fcin)
-	doJson, _ := json.Marshal(fcin)
-	FreqChange_Current.Freq = fcin.Freq
-	fc.Do("/", string(doJson))
+	json.Unmarshal(file, &moduin)
+	FreqChange_Current = moduin
+	doJson, _ := json.Marshal(moduin)
+	modu.Do("/", string(doJson))
 	return nil
 }
 
-func (fc *FreqChange) Accepts() string {
-	str, ok := fc.DefaultJSON().(FreqChange_AcceptJSON)
+func (modu *FreqChange) Accepts() string {
+	str, ok := modu.DefaultJSON().(FreqChange_AcceptJSON)
 	if !ok {
 		log.Fatal("FreqChange Accepts(): not correct type")
 	}
@@ -84,21 +93,21 @@ func (fc *FreqChange) Accepts() string {
 	return string(marshedJson)
 }
 
-func (fc *FreqChange) Current() string {
+func (modu *FreqChange) Current() string {
 	marshalled, _ := json.Marshal(FreqChange_Current)
 	return string(marshalled)
 }
 
-func (fc *FreqChange) Do(where string, in string) error {
-	fcin, ok := fc.DefaultJSON().(FreqChange_AcceptJSON)
+func (modu *FreqChange) Do(where string, in string) error {
+	moduin, ok := modu.DefaultJSON().(FreqChange_AcceptJSON)
 	if !ok {
 		return errors.New("internal mod error: Do(), DefaultJSON not correct type")
 	}
-	err := json.Unmarshal([]byte(in), &fcin)
+	err := json.Unmarshal([]byte(in), &moduin)
 	if err != nil {
 		return err
 	}
-	freq := fcin.Freq
+	freq := moduin.Freq
 	if freq < 0 || freq > 2 {
 		return errors.New("freq must be between 0 and 2")
 	}
@@ -119,8 +128,21 @@ func (fc *FreqChange) Do(where string, in string) error {
 		ramfreq = "800000"
 		gov = "performance"
 	}
-	fmt.Println(cpufreq + " " + ramfreq + " " + gov)
-	fc.Save(where, in)
-	FreqChange_Current.Freq = freq
+	fmt.Println("FreqChange done!: " + cpufreq + " " + ramfreq + " " + gov)
+	RunCmd("echo " + cpufreq + " > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq")
+	RunCmd("echo disabled > /sys/kernel/debug/msm_otg/bus_voting")
+	RunCmd("echo 0 > /sys/kernel/debug/msm-bus-dbg/shell-client/update_request")
+	RunCmd("echo 1 > /sys/kernel/debug/msm-bus-dbg/shell-client/mas")
+	RunCmd("echo 512 > /sys/kernel/debug/msm-bus-dbg/shell-client/slv")
+	RunCmd("echo 0 > /sys/kernel/debug/msm-bus-dbg/shell-client/ab")
+	RunCmd("echo active clk2 0 1 max " + ramfreq + " > /sys/kernel/debug/rpm_send_msg/message")
+	RunCmd("echo " + gov + " > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor")
+	RunCmd("echo 1 > /sys/kernel/debug/msm-bus-dbg/shell-client/update_request")
+	modu.Save(where, in)
+	FreqChange_Current = moduin
 	return nil
+}
+
+func RunCmd(cmd string) ([]byte, error) {
+	return exec.Command("/bin/bash", "-c", cmd).Output()
 }

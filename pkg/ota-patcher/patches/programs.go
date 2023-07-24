@@ -2,6 +2,7 @@ package patches
 
 import (
 	"os"
+	"os/exec"
 
 	"github.com/kercre123/wire-os/pkg/vars"
 	cp "github.com/otiai10/copy"
@@ -54,6 +55,38 @@ func AddNano(version vars.Version, target int) error {
 		return err
 	}
 	err = cp.Copy(PluginsPath+"AddNano/libncurses.so.5", WorkPath+"lib/libncurses.so.5")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func AddWired(version vars.Version, target int) error {
+	vars.PatchLogger("Building wired... this may take a while...")
+	_, err := exec.Command("/bin/bash", "-c", "./wired/build.sh").Output()
+	vars.PatchLogger("Installing wired...")
+	if err != nil {
+		return err
+	}
+	err = cp.Copy("./wired/build/wired", WorkPath+"usr/bin/wired")
+	if err != nil {
+		return err
+	}
+	err = cp.Copy("./wired/wired.service", WorkPath+"etc/systemd/system/multi-user.target.wants/wired.service")
+	if err != nil {
+		return err
+	}
+	os.Mkdir(WorkPath+"etc/wired", 0777)
+	err = cp.Copy("./wired/modfiles", WorkPath+"etc/wired/mods")
+	if err != nil {
+		return err
+	}
+	os.Remove(WorkPath + "etc/iptables/iptables.rules")
+	err = cp.Copy("./wired/iptables.rules", WorkPath+"etc/iptables/iptables.rules")
+	if err != nil {
+		return err
+	}
+	err = cp.Copy("./wired/webroot", WorkPath+"etc/wired/webroot")
 	if err != nil {
 		return err
 	}

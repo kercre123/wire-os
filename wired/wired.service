@@ -1,0 +1,13 @@
+[Unit]
+Description=WireOS daemon
+Requires=ankiinit.service
+After=ankiinit.service
+
+[Service]
+Type=simple
+Restart=onfailure
+RestartSec=10
+ExecStart=/usr/bin/wired
+
+[Install]
+WantedBy=multi-user.target

@@ -8,71 +8,76 @@ import (
 	"os"
 
 	"github.com/kercre123/wire-os/wired/vars"
+	cp "github.com/otiai10/copy"
 )
 
-type LightsMod struct {
+type RainbowLights struct {
 	vars.Modification
 }
 
-func NewLightsMod() *LightsMod {
-	return &LightsMod{}
+func NewRainbowLights() *RainbowLights {
+	return &RainbowLights{}
 }
 
-type LightsMod_AcceptJSON struct {
-	Freq int `json:"freq"`
+var RainbowLights_Current RainbowLights_AcceptJSON
+
+type RainbowLights_AcceptJSON struct {
+	Enabled bool `json:"enabled"`
 }
 
-func (fc *LightsMod) Name() string {
-	return "LightsMod"
+func (modu *RainbowLights) Name() string {
+	return "RainbowLights"
 }
 
-func (fc *LightsMod) Description() string {
-	return "Modifies CPU/RAM frequency for faster operation."
+func (modu *RainbowLights) Description() string {
+	return "Makes the backpack/cube lights rainbow."
 }
 
-func (fc *LightsMod) DefaultJSON() any {
-	return LightsMod_AcceptJSON{
-		// default is balanced
-		Freq: 1,
+func (modu *RainbowLights) RestartRequired() bool {
+	return true
+}
+
+func (modu *RainbowLights) DefaultJSON() any {
+	return RainbowLights_AcceptJSON{
+		Enabled: true,
 	}
 }
 
-func (fc *LightsMod) Save(where string, in string) error {
-	fcin, ok := fc.DefaultJSON().(LightsMod_AcceptJSON)
+func (modu *RainbowLights) Save(where string, in string) error {
+	moduin, ok := modu.DefaultJSON().(RainbowLights_AcceptJSON)
 	if !ok {
 		return errors.New("internal mod error: Save(), DefaultJSON not correct type")
 	}
-	json.Unmarshal([]byte(in), &fcin)
-	saveJson, err := json.Marshal(fcin)
+	json.Unmarshal([]byte(in), &moduin)
+	saveJson, err := json.Marshal(moduin)
 	if err != nil {
 		return err
 	}
-	os.MkdirAll(vars.GetModDir(fc, where), 0777)
-	os.WriteFile(vars.GetModDir(fc, where)+"/saved.json", saveJson, 0777)
+	os.MkdirAll(vars.GetModDir(modu, where), 0777)
+	os.WriteFile(vars.GetModDir(modu, where)+"/saved.json", saveJson, 0777)
 	return nil
 }
 
-func (fc *LightsMod) Load() error {
-	fcin, ok := fc.DefaultJSON().(LightsMod_AcceptJSON)
+func (modu *RainbowLights) Load() error {
+	moduin, ok := modu.DefaultJSON().(RainbowLights_AcceptJSON)
 	if !ok {
 		return errors.New("internal mod error: Load(), DefaultJSON not correct type")
 	}
-	file, err := os.ReadFile(vars.GetModDir(fc, "/") + "/saved.json")
+	file, err := os.ReadFile(vars.GetModDir(modu, "/") + "saved.json")
 	if err != nil {
-		defaultJson, _ := json.Marshal(fcin)
-		fc.Do("/", string(defaultJson))
+		defaultJson, _ := json.Marshal(moduin)
+		modu.Do("/", string(defaultJson))
 		return nil
 	}
-	json.Unmarshal(file, &fcin)
-	doJson, _ := json.Marshal(fcin)
-	fc.Do("/", string(doJson))
+	json.Unmarshal(file, &moduin)
+	RainbowLights_Current = moduin
 	return nil
 }
 
-func (fc *LightsMod) Accepts() string {
-	str, ok := fc.DefaultJSON().(LightsMod_AcceptJSON)
+func (modu *RainbowLights) Accepts() string {
+	str, ok := modu.DefaultJSON().(RainbowLights_AcceptJSON)
 	if !ok {
-		log.Fatal("LightsMod Accepts(): not correct type")
+		log.Fatal("RainbowLights Accepts(): not correct type")
 	}
 	marshedJson, err := json.Marshal(str)
 	if err != nil {
@@ -81,38 +86,31 @@ func (fc *LightsMod) Accepts() string {
 	return string(marshedJson)
 }
 
-func (fc *LightsMod) Do(where string, in string) error {
-	fcin, ok := fc.DefaultJSON().(LightsMod_AcceptJSON)
+func (modu *RainbowLights) Current() string {
+	marshalled, _ := json.Marshal(RainbowLights_Current)
+	return string(marshalled)
+}
+
+func (modu *RainbowLights) Do(where string, in string) error {
+	moduin, ok := modu.DefaultJSON().(RainbowLights_AcceptJSON)
 	if !ok {
 		return errors.New("internal mod error: Do(), DefaultJSON not correct type")
 	}
-	err := json.Unmarshal([]byte(in), &fcin)
+	err := json.Unmarshal([]byte(in), &moduin)
 	if err != nil {
 		return err
 	}
-	fmt.Println(fcin.Freq)
-	freq := fcin.Freq
-	if freq < 0 || freq > 2 {
-		return errors.New("freq must be between 0 and 2")
+	fmt.Println("RainbowLights Do(): " + fmt.Sprint(moduin.Enabled))
+	var lightsFolder string
+	destFolder := where + vars.VectorResources + "config/engine/lights"
+	if moduin.Enabled {
+		lightsFolder = vars.GetModDir(modu, where) + "rainbow"
+	} else {
+		lightsFolder = vars.GetModDir(modu, where) + "orig"
 	}
-	var cpufreq string
-	var ramfreq string
-	var gov string
-	switch {
-	case freq == 0:
-		cpufreq = "533333"
-		ramfreq = "400000"
-		gov = "interactive"
-	case freq == 1:
-		cpufreq = "733333"
-		ramfreq = "600000"
-		gov = "ondemand"
-	case freq == 2:
-		cpufreq = "1267200"
-		ramfreq = "800000"
-		gov = "performance"
-	}
-	fmt.Println(cpufreq + " " + ramfreq + " " + gov)
-	fc.Save(where, in)
+	os.RemoveAll(destFolder)
+	cp.Copy(lightsFolder, destFolder)
+	modu.Save(where, in)
+	RainbowLights_Current = moduin
 	return nil
 }

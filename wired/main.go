@@ -13,6 +13,7 @@ import (
 
 var EnabledMods []vars.Modification = []vars.Modification{
 	mods.NewFreqChange(),
+	mods.NewRainbowLights(),
 }
 
 type HTTPStatus struct {
@@ -63,6 +64,17 @@ func ModHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		fmt.Fprint(w, mod.Current())
+	case strings.HasPrefix(r.URL.Path, "/api/mods/needsrestart/"):
+		modFromURL := strings.TrimSpace(strings.TrimPrefix(r.URL.Path, "/api/mods/needsrestart/"))
+		mod, err := vars.FindMod(modFromURL)
+		if err != nil {
+			HTTPError(w, r, "mod does not exist")
+			return
+		}
+		fmt.Fprint(w, mod.RestartRequired())
+	case strings.HasPrefix(r.URL.Path, "/api/restartvic"):
+		vars.RestartVic()
+		HTTPSuccess(w, r)
 	default:
 		HTTPError(w, r, "404 not found")
 	}
@@ -75,11 +87,13 @@ func main() {
 }
 
 func startweb() {
-	fmt.Println("starting web at port 8081")
-	http.Handle("/", http.FileServer(http.Dir("./webroot")))
+	fmt.Println("starting web at port 8080")
+	http.Handle("/", http.FileServer(http.Dir("/etc/wired/webroot")))
 	http.HandleFunc("/api/mods/modify/", ModHandler)
 	http.HandleFunc("/api/mods/current/", ModHandler)
-	http.ListenAndServe(":8081", nil)
+	http.HandleFunc("/api/mods/needsrestart/", ModHandler)
+	http.HandleFunc("/api/restartvic", ModHandler)
+	http.ListenAndServe(":8080", nil)
 }
 
 func startshell() {

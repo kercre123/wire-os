@@ -12,6 +12,7 @@ wired: go_deps
 	docker container run  \
 	-v "$(shell pwd)":/go/src/kercre123/wire-os/wired \
 	-v $(GOPATH)/pkg/mod:/go/pkg/mod \
+	-v /tmp:/tmp \
 	-w /go/src/kercre123/wire-os/wired \
 	--user $(UID):$(GID) \
 	armbuilder \
@@ -24,6 +25,7 @@ wired: go_deps
 	docker container run \
 	-v "$(shell pwd)":/go/src/kercre123/wire-os/wired \
 	-v $(GOPATH)/pkg/mod:/go/pkg/mod \
+	-v /tmp:/tmp \
 	-w /go/src/kercre123/wire-os/wired \
 	--user $(UID):$(GID) \
 	armbuilder \

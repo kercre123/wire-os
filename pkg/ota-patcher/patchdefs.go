@@ -52,4 +52,14 @@ var WireOSPatches []OTAPatch = []OTAPatch{
 		Description: "Adds a custom update engine, which can download OTAs produced by this tool.",
 		Patch:       patches.CustomUpdateEngine,
 	},
+	{
+		Name:        "AddWired",
+		Description: "Adds the custom wire daemon for user-controlled modules.",
+		Patch:       patches.AddWired,
+	},
+	{
+		Name:        "MakeSysrootRW",
+		Description: "Makes the sysroot read/write",
+		Patch:       patches.MakeSysrootRW,
+	},
 }

@@ -5,8 +5,10 @@
 </head>
 <body>
     <header>
-        <h1>FreqChange</h1>
+        <h1>wire_d test mods</h1>
     </header>
+    <div id="mods">
+    <h2>FreqChange</h2>
     <form>
         <input type="radio" id="regular" name="frequency" value="0">
         <label for="regular">Regular</label><br>
@@ -16,6 +18,22 @@
         <label for="performance">Performance</label><br>
         <button type="button" onclick="FreqChange_Submit()">Submit</button>
     </form>
+    <h2>RainbowLights</h2>
+    <form>
+        <input type="radio" id="disabled" name="rainbowlights" value="false">
+        <label for="regular">Disabled</label><br>
+        <input type="radio" id="enabled" name="rainbowlights" value="true">
+        <label for="balanced">Enabled</label><br>
+        <button type="button" onclick="RainbowLights_Submit()">Submit</button>
+    </form>
+    </div>
+    <div id="showDuringVicRestart">
+        <h1>Vector is restarting... please wait</h1>
+    </div>
+    <div id="restartNeeded">
+        <h2>A vic restart is required for changes to take affect.</h2>
+        <input type="button" value="Restart" id="restartButton" onclick="RestartVic()">
+    </div>
     <script src="js/mods.js"></script>
 </body>
 </html>
