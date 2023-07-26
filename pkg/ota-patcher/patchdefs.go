@@ -62,4 +62,9 @@ var WireOSPatches []OTAPatch = []OTAPatch{
 		Description: "Makes the sysroot read/write",
 		Patch:       patches.MakeSysrootRW,
 	},
+	{
+		Name:        "AddSSHKey",
+		Description: "Adds regular dev SSH keys (if DDL-era software)",
+		Patch:       patches.AddSSHKey,
+	},
 }

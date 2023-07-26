@@ -7,6 +7,8 @@
     <header>
         <h1>wire_d test mods</h1>
     </header>
+    <hr>
+    <div id="modStatus"></div>
     <div id="mods">
     <h2>FreqChange</h2>
     <form>
@@ -21,10 +23,23 @@
     <h2>RainbowLights</h2>
     <form>
         <input type="radio" id="disabled" name="rainbowlights" value="false">
-        <label for="regular">Disabled</label><br>
+        <label for="disabled">Disabled</label><br>
         <input type="radio" id="enabled" name="rainbowlights" value="true">
-        <label for="balanced">Enabled</label><br>
+        <label for="enabled">Enabled</label><br>
         <button type="button" onclick="RainbowLights_Submit()">Submit</button>
+    </form>
+    <h2>BootAnim</h2>
+    <form>
+        <div id="bootAnimCurrent"></div>
+        <input type="checkbox" id="bootAnimDefault" onclick="bootAnimCheckValidate()">
+        <label for="bootAnimDefault">Use default WireOS boot animation</label><br>
+        <div id="bootAnimUploadHide">
+            <input type="file" id="bootAnimUpload" accept="image/gif">
+        </div>
+        <br>
+        <button type="button" onclick="BootAnim_Submit()">Submit</button>
+        <br>
+        <button type="button" onclick="BootAnim_Test()">Test boot animation on robot</button>
     </form>
     </div>
     <div id="showDuringVicRestart">
@@ -34,6 +49,7 @@
         <h2>A vic restart is required for changes to take affect.</h2>
         <input type="button" value="Restart" id="restartButton" onclick="RestartVic()">
     </div>
+    <hr>
     <script src="js/mods.js"></script>
 </body>
 </html>

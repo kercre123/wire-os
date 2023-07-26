@@ -3,6 +3,7 @@ package patches
 import (
 	"bufio"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 	"time"
@@ -95,6 +96,7 @@ PRETTY_NAME="msm ` + formattedTime + `"
 	os.WriteFile(WorkPath+"etc/os-version-code", []byte(version.Increment+"\n"), 0755)
 	os.WriteFile(WorkPath+"etc/os-version-rev", []byte("wireos\n"), 0755)
 	vars.PatchLogger("/anki/etc")
+	cp.Copy(WorkPath+"anki/etc/version", WorkPath+"anki/etc/origversion")
 	os.WriteFile(WorkPath+"anki/etc/version", []byte(version.Full+"\n"), 0755)
 	os.WriteFile(WorkPath+"anki/etc/revision", []byte("wire-os\n"), 0755)
 	return nil
@@ -136,6 +138,18 @@ func MakeSysrootRW(version vars.Version, target int) error {
 	err := cp.Copy("./resources/patches/MakeSysrootRW/fstab", WorkPath+"etc/fstab")
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func AddSSHKey(version vars.Version, target int) error {
+	if _, err := os.Stat(WorkPath + "etc/init.d/localsshuser.sh"); err == nil {
+		os.Remove(WorkPath + "etc/init.d/localsshuser.sh")
+		err := cp.Copy("./resources/patches/AddSSHKey/localsshuser.sh", WorkPath+"etc/init.d/localsshuser.sh")
+		if err != nil {
+			return err
+		}
+		exec.Command("/bin/bash", "-c", "chmod 0777 "+WorkPath+"etc/init.d/localsshuser.sh")
 	}
 	return nil
 }
