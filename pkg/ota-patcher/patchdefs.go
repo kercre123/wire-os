@@ -63,6 +63,11 @@ var WireOSPatches []OTAPatch = []OTAPatch{
 		Patch:       patches.MakeSysrootRW,
 	},
 	{
+		Name:        "PatchMountData",
+		Description: "Mounts /data with exec perms",
+		Patch:       patches.PatchMountData,
+	},
+	{
 		Name:        "AddSSHKey",
 		Description: "Adds regular dev SSH keys (if DDL-era software)",
 		Patch:       patches.AddSSHKey,

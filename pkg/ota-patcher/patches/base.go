@@ -133,9 +133,31 @@ func ProdServerEnv(version vars.Version, target int) error {
 }
 
 func MakeSysrootRW(version vars.Version, target int) error {
+	var patchedFstabPathSuffix string
+	if target == 3 {
+		patchedFstabPathSuffix = "-orange"
+	} else {
+		patchedFstabPathSuffix = "-norm"
+	}
 	vars.PatchLogger("Copying fstab")
 	os.Remove(WorkPath + "etc/fstab")
-	err := cp.Copy("./resources/patches/MakeSysrootRW/fstab", WorkPath+"etc/fstab")
+	err := cp.Copy("./resources/patches/MakeSysrootRW/fstab"+patchedFstabPathSuffix, WorkPath+"etc/fstab")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func PatchMountData(version vars.Version, target int) error {
+	var patchedMountSuffix string
+	if target == 3 {
+		patchedMountSuffix = "-orange"
+	} else {
+		patchedMountSuffix = "-norm"
+	}
+	vars.PatchLogger("Copying fstab")
+	os.Remove(WorkPath + "etc/initscripts/mount-data")
+	err := cp.Copy("./resources/patches/PatchMountData/mount-data"+patchedMountSuffix, WorkPath+"etc/initscripts/mount-data")
 	if err != nil {
 		return err
 	}
