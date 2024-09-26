@@ -50,7 +50,7 @@ func CompressBytes(in []byte) ([]byte, error) {
 }
 
 func UnmountImage(path string) error {
-	err := exec.Command("umount", path).Run()
+	err := exec.Command("guestunmount", path).Run()
 	if err != nil {
 		return err
 	}
@@ -79,9 +79,6 @@ func PackTar(systembytes []byte, target int, manifest []byte, version vars.Versi
 		return err
 	}
 	tarFile.Write(manifest)
-	if err != nil {
-		return err
-	}
 	// sha would go here
 	err = tarFile.WriteHeader(&tar.Header{
 		Name: "apq8009-robot-boot.img.gz",
@@ -92,9 +89,6 @@ func PackTar(systembytes []byte, target int, manifest []byte, version vars.Versi
 		return err
 	}
 	tarFile.Write(bootbytes)
-	if err != nil {
-		return err
-	}
 	err = tarFile.WriteHeader(&tar.Header{
 		Name: "apq8009-robot-sysfs.img.gz",
 		Size: int64(len(systembytes)),
@@ -104,9 +98,6 @@ func PackTar(systembytes []byte, target int, manifest []byte, version vars.Versi
 		return err
 	}
 	tarFile.Write(systembytes)
-	if err != nil {
-		return err
-	}
 	err = tarFile.Close()
 	if err != nil {
 		return err

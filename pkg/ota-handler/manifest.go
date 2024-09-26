@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/kercre123/wire-os/pkg/vars"
@@ -76,7 +77,7 @@ func FindImageLength(image string) string {
 }
 
 func FindImageHash(image string) string {
-	filename := os.TempDir() + "apq8009-robot-sysfs.img"
+	filename := filepath.Join(os.TempDir(), "apq8009-robot-sysfs.img")
 	file, _ := os.ReadFile(image)
 	fmt.Println("[FindImageHash] Compressing...")
 	compressed, _ := CompressBytes(file)
@@ -84,10 +85,14 @@ func FindImageHash(image string) string {
 	decompressed, _ := DecompressBytes(compressed)
 	os.WriteFile(filename, decompressed, 0777)
 	fmt.Println("[FindImageHash] Finding hash of system image...")
-	finalfile, _ := os.Open(filename)
+	finalfile, err := os.Open(filename)
+	if err != nil {
+		fmt.Println("error opening file: " + err.Error())
+		return ""
+	}
 	h := sha256.New()
 	if _, err := io.Copy(h, finalfile); err != nil {
-		fmt.Println("error getting hash")
+		fmt.Println("error getting hash: " + err.Error())
 		return ""
 	}
 	os.Remove(filename)
