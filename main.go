@@ -139,7 +139,7 @@ func main() {
 	case "patch":
 		patchCmd.Parse(os.Args[2:])
 		if *patchOutput == "" || *patchTarget == -1 {
-			fmt.Println("Usage: patch -output=<output OTA version> -target=<0-3>")
+			fmt.Println("Usage: patch -output=<output OTA version> -target=<0-4>")
 			os.Exit(1)
 		}
 		version, err := manager.SplitVersion(*patchOutput)
@@ -147,8 +147,8 @@ func main() {
 			fmt.Printf("Error: %v\n", err)
 			os.Exit(1)
 		}
-		if *patchTarget < 0 || *patchTarget > 3 {
-			fmt.Println("Error: target must be between 0 and 3")
+		if *patchTarget < 0 || *patchTarget > 4 {
+			fmt.Println("Error: target must be between 0 and 4")
 			os.Exit(1)
 		}
 		fmt.Println("Running patches...")
@@ -208,6 +208,7 @@ func main() {
 		fmt.Println("  1 = whiskey")
 		fmt.Println("  2 = oskr")
 		fmt.Println("  3 = orange")
+		fmt.Println("  4 = dvt3")
 
 	default:
 		fmt.Printf("Unknown subcommand: %s\n", os.Args[1])

@@ -13,7 +13,7 @@ const (
 	DownloadsJson = JsonPath + "downloads.json"
 )
 
-var Targets []string = []string{"dev", "whiskey", "oskr", "orange"}
+var Targets []string = []string{"dev", "whiskey", "oskr", "orange", "dvt3"}
 
 type Modifier struct {
 	Name        string `json:"name"`

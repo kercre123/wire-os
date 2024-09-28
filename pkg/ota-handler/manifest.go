@@ -107,7 +107,7 @@ func CreateManifest(version vars.Version, image string, target int) []byte {
 	meta, _ := manifest.NewSection("META")
 	meta.NewKey("manifest_version", "0.9.2")
 	meta.NewKey("update_version", version.Full)
-	meta.NewKey("ankidev", "0")
+	meta.NewKey("ankidev", "1")
 	meta.NewKey("num_images", "2")
 	meta.NewKey("reboot_after_install", "0")
 	boot, _ := manifest.NewSection("BOOT")
