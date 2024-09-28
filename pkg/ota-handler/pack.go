@@ -50,9 +50,26 @@ func CompressBytes(in []byte) ([]byte, error) {
 }
 
 func UnmountImage(path string) error {
-	err := exec.Command("guestunmount", path).Run()
+	// err := exec.Command("guestunmount", path).Run()
+	// if err != nil {
+	// 	fmt.Println("couldn't guestunmount?")
+	// 	return err
+	// }
+	err := exec.Command("umount", path).Run()
 	if err != nil {
+		fmt.Println("couldn't unmount?")
 		return err
+	}
+	exec.Command("sync").Run()
+	err = exec.Command("fsck.ext4", "-f", "-y", "./tmp/apq8009-robot-sysfs.img").Run()
+	if err != nil {
+		fmt.Println("first fsck failed, running again")
+		out, err := exec.Command("fsck.ext4", "-f", "-y", "./tmp/apq8009-robot-sysfs.img").Output()
+		if err != nil {
+			fmt.Println(string(out))
+			return err
+		}
+		fmt.Println("second fsck succeeded!")
 	}
 	return nil
 }

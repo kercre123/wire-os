@@ -17,23 +17,13 @@ const (
 	PluginsPath = "./resources/patches/"
 )
 
-var ProdServerConfig string = `{
-	"jdocs": "jdocs.api.ddl.io:443",
-	"tms": "token.api.ddl.io:443",
-	"chipper": "chipper.api.ddl.io:443",
-	"check": "conncheck.global.anki-services.com/ok",
-	"logfiles": "s3://anki-device-logs-prod/victor",
-	"appkey": "oDoa0quieSeir6goowai7f"
-}
-`
-
 func AddVersion(version vars.Version, target int) error {
 	// revision will eventually be hooked up to github commit
 	vars.PatchLogger("Modifying build.prop file")
 	// read prop in OTA
 	var propLines []string
 	var customProps []string
-	verAppendage := vars.Targets[target]
+	verAppendage := "dev"
 	origProp, err := os.Open(WorkPath + "build.prop")
 	if err != nil {
 		return err
@@ -53,6 +43,16 @@ func AddVersion(version vars.Version, target int) error {
 	formattedTime := currentTime.Format("200601021504")
 	vars.PatchLogger("Current time: " + formattedTime)
 	vars.PatchLogger("Version: v" + version.Full + verAppendage)
+	/*
+		ro.revision=anki-ea5d84b_os-689b9cd
+		ro.anki.version=2.0.1.6080
+		ro.anki.victor.version=2.0.1.6080
+		ro.build.fingerprint=v2.0.1.6080-ea5d84b_os2.0.1.6080-689b9cd-202209201956
+		ro.build.id=v2.0.1.6080-ea5d84b_os2.0.1.6080-689b9cd-202209201956
+		ro.build.display.id=2.0.1.6080
+		ro.build.type=production
+		ro.build.version.incremental=6080
+	*/
 	customProps = append(customProps, "ro.build.version.release="+formattedTime)
 	customProps = append(customProps, "ro.product.name=Vector")
 	customProps = append(customProps, "ro.revision=wire_os")
@@ -60,7 +60,7 @@ func AddVersion(version vars.Version, target int) error {
 	customProps = append(customProps, "ro.anki.victor.version="+version.Full)
 	customProps = append(customProps, "ro.build.fingerprint=v"+version.Full+"-wire_os"+version.Full+"-"+verAppendage+"-"+formattedTime)
 	customProps = append(customProps, "ro.build.id=v"+version.Full+"-wire_os"+version.Full+"-"+verAppendage+"-"+formattedTime)
-	customProps = append(customProps, "ro.build.display.id=v"+version.Full+verAppendage)
+	customProps = append(customProps, "ro.build.display.id=v"+version.Full+vars.Targets[target])
 	customProps = append(customProps, "ro.build.target="+strconv.Itoa(target))
 	customProps = append(customProps, "ro.build.type=development")
 	customProps = append(customProps, "ro.build.version.incremental="+version.Increment)
@@ -111,21 +111,6 @@ func AddCorrectKernelModules(version vars.Version, target int) error {
 		return err
 	}
 	err = cp.Copy(moduleIf, moduleOut)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func ProdServerEnv(version vars.Version, target int) error {
-	vars.PatchLogger("Setting server env to prod")
-	configPath := WorkPath + "anki/data/assets/cozmo_resources/config/server_config.json"
-	_, err := os.ReadFile(configPath)
-	if err != nil {
-		vars.PatchLogger("Server config file does not exist. Not erroring because this is normal in older versions")
-		return nil
-	}
-	err = os.WriteFile(configPath, []byte(ProdServerConfig), 0777)
 	if err != nil {
 		return err
 	}

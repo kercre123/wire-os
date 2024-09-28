@@ -23,11 +23,6 @@ var WireOSPatches []OTAPatch = []OTAPatch{
 		Patch:       patches.AddCorrectKernelModules,
 	},
 	{
-		Name:        "ProdServerEnv",
-		Description: "Switches server env to prod.",
-		Patch:       patches.ProdServerEnv,
-	},
-	{
 		Name:        "AddNano",
 		Description: "Adds nano, a text editor, to the filesystem.",
 		Patch:       patches.AddNano,

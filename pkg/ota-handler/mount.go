@@ -74,7 +74,12 @@ func GetOTASystem(filename string) ([]byte, error) {
 
 func MountImage(image string, path string) error {
 	//guestmount -a thing.img -m /dev/sda1 --rw edits/
-	err := exec.Command("guestmount", "-a", image, "-m", "/dev/sda", "--rw", "-o", "nonempty", "-o", "direct_io", path).Run()
+	//out, err := exec.Command("guestmount", "-a", image, "-m", "/dev/sda", "--rw", "-o", "nonempty", "-o", "direct_io", "-o", "noatime", path).Output()
+	// if err != nil {
+	// 	fmt.Println(string(out))
+	// 	return err
+	// }
+	err := exec.Command("mount", "-o", "rw,nodiratime,noatime", image, path).Run()
 	if err != nil {
 		return err
 	}

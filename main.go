@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/user"
 	"strings"
 
 	manager "github.com/kercre123/wire-os/pkg/download-manager"
@@ -14,13 +15,13 @@ import (
 	"github.com/kercre123/wire-os/pkg/vars"
 )
 
-// func isRoot() bool {
-// 	currentUser, err := user.Current()
-// 	if err != nil {
-// 		log.Fatalf("[isRoot] Unable to get current user: %s", err)
-// 	}
-// 	return currentUser.Username == "root"
-// }
+func isRoot() bool {
+	currentUser, err := user.Current()
+	if err != nil {
+		log.Fatalf("[isRoot] Unable to get current user: %s", err)
+	}
+	return currentUser.Username == "root"
+}
 
 func startWeb() {
 	fmt.Println("Starting OTA fileserver at port 8080")
@@ -32,10 +33,10 @@ func startWeb() {
 }
 
 func main() {
-	// if !isRoot() {
-	// 	fmt.Println("This program must be run as root, as it mounts filesystems.")
-	// 	os.Exit(1)
-	// }
+	if !isRoot() {
+		fmt.Println("This program must be run as root, as it mounts filesystems.")
+		os.Exit(1)
+	}
 
 	vars.InitDownloadManager()
 
