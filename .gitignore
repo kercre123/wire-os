@@ -2,3 +2,4 @@
 /out/*.ota
 /tmp/*.img
 /json/downloads.json
+/wired/build/wired
