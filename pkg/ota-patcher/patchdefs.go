@@ -28,6 +28,11 @@ var WireOSPatches []OTAPatch = []OTAPatch{
 		Patch:       patches.AddNano,
 	},
 	{
+		Name:        "AddHtop",
+		Description: "Adds htop.",
+		Patch:       patches.AddHtop,
+	},
+	{
 		Name:        "AddRsync",
 		Description: "Adds rsync, which is helpful for data transfer, to the filesystem.",
 		Patch:       patches.AddRsync,

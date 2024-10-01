@@ -61,6 +61,15 @@ func AddNano(version vars.Version, target int) error {
 	return nil
 }
 
+func AddHtop(version vars.Version, target int) error {
+	vars.PatchLogger("Adding htop to /usr/bin")
+	err := cp.Copy(PluginsPath+"AddHtop/htop", WorkPath+"usr/bin/htop")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func AddWired(version vars.Version, target int) error {
 	if target == 3 {
 		vars.PatchLogger("This is an orange build. Not installing wired.")
