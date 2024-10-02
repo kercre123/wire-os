@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"os/exec"
 	"strings"
 	"time"
@@ -59,8 +60,9 @@ func (bc *BaseModification) RestartRequired() bool {
 var EnabledMods []Modification
 
 func GetModDir(mod Modification, where string) string {
-	return where + "etc/wired/mods/" + mod.Name() + "/"
-	//return "./modtest/" + mod.Name() + "/"
+	path := where + "data/wired/mods/" + mod.Name() + "/"
+	os.MkdirAll(path, 0777)
+	return path
 }
 
 func FindMod(name string) (Modification, error) {

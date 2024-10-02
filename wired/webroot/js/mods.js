@@ -13,34 +13,34 @@ async function UpdateAllMods(undata) {
         }
     }
 
-    data = await GetCurrent('RainbowLights');
-    console.log(data.enabled)
-    radioButtons = document.getElementsByName("rainbowlights");
-    for(var i = 0; i < radioButtons.length; i++){
-        if(radioButtons[i].value == JSON.stringify(data.enabled)){
-            radioButtons[i].checked = true;
-            break;
-        }
-    }
+    // data = await GetCurrent('RainbowLights');
+    // console.log(data.enabled)
+    // radioButtons = document.getElementsByName("rainbowlights");
+    // for(var i = 0; i < radioButtons.length; i++){
+    //     if(radioButtons[i].value == JSON.stringify(data.enabled)){
+    //         radioButtons[i].checked = true;
+    //         break;
+    //     }
+    // }
 
-    let response = await GetCurrent('BootAnim');
-    let checkbox = document.getElementById('bootAnimDefault');
-    let divUpload = document.getElementById('bootAnimUploadHide');
+    // let response = await GetCurrent('BootAnim');
+    // let checkbox = document.getElementById('bootAnimDefault');
+    // let divUpload = document.getElementById('bootAnimUploadHide');
 
-    if(response.default == false) {
-        checkbox.checked = false;
-        divUpload.style.display = "block";
+    // if(response.default == false) {
+    //     checkbox.checked = false;
+    //     divUpload.style.display = "block";
 
-        let img = document.createElement('img');
-        img.src = `data:image/gif;base64,${response.gifdata}`;
-        document.getElementById('bootAnimCurrent').innerHTML = "";
-        document.getElementById('bootAnimCurrent').appendChild(img);
-    } else {
-        document.getElementById('bootAnimCurrent').innerHTML = "";
-        checkbox.checked = true;
-        divUpload.style.display = "none";
-    }
-    bootAnimCheckValidate()
+    //     let img = document.createElement('img');
+    //     img.src = `data:image/gif;base64,${response.gifdata}`;
+    //     document.getElementById('bootAnimCurrent').innerHTML = "";
+    //     document.getElementById('bootAnimCurrent').appendChild(img);
+    // } else {
+    //     document.getElementById('bootAnimCurrent').innerHTML = "";
+    //     checkbox.checked = true;
+    //     divUpload.style.display = "none";
+    // }
+    // bootAnimCheckValidate()
 }
 
 async function GetCurrent(mod) {

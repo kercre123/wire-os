@@ -10,8 +10,6 @@ import (
 
 var EnabledMods []vars.Modification = []vars.Modification{
 	mods.NewFreqChange(),
-	mods.NewRainbowLights(),
-	mods.NewBootAnim(),
 }
 
 func main() {

@@ -28,6 +28,11 @@ var WireOSPatches []OTAPatch = []OTAPatch{
 		Patch:       patches.AddNano,
 	},
 	{
+		Name:        "AddWired",
+		Description: "Adds wire_d, a daemon for controlling stuff via a webserver.",
+		Patch:       patches.AddWired,
+	},
+	{
 		Name:        "AddHtop",
 		Description: "Adds htop.",
 		Patch:       patches.AddHtop,
