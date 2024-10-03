@@ -71,19 +71,13 @@ func FindBootHash(target int) string {
 	return "0"
 }
 
-func FindImageLength(image string) string {
-	file, _ := os.ReadFile(image)
-	return strconv.Itoa(len(file))
+func FindImageLength(image []byte) string {
+	return strconv.Itoa(len(image))
 }
 
-func FindImageHash(image string) string {
+func FindImageHash(image []byte) string {
 	filename := filepath.Join(os.TempDir(), "apq8009-robot-sysfs.img")
-	file, _ := os.ReadFile(image)
-	fmt.Println("[FindImageHash] Compressing...")
-	compressed, _ := CompressBytes(file)
-	fmt.Println("[FindImageHash] Decompressing...")
-	decompressed, _ := DecompressBytes(compressed)
-	os.WriteFile(filename, decompressed, 0777)
+	os.WriteFile(filename, image, 0777)
 	fmt.Println("[FindImageHash] Finding hash of system image...")
 	finalfile, err := os.Open(filename)
 	if err != nil {
@@ -99,8 +93,14 @@ func FindImageHash(image string) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-func CreateManifest(version vars.Version, image string, target int) []byte {
+func CreateManifest(version vars.Version, compressed []byte, target int) []byte {
 	//imageBytes, _ := os.ReadFile(image)
+	fmt.Println("[CreateManifest] Decompressing system image to find hash...", len(compressed))
+	decompressed, err := DecompressBytes(compressed)
+	if err != nil {
+		fmt.Println("Failed to decompress bytes: ", err)
+		os.Exit(1)
+	}
 	var buf []byte
 	buffer := bytes.NewBuffer(buf)
 	manifest := ini.Empty()
@@ -122,8 +122,8 @@ func CreateManifest(version vars.Version, image string, target int) []byte {
 	sysfs.NewKey("delta", "0")
 	sysfs.NewKey("compression", "gz")
 	sysfs.NewKey("wbits", "31")
-	sysfs.NewKey("bytes", FindImageLength(image))
-	sysfs.NewKey("sha256", FindImageHash(image))
+	sysfs.NewKey("bytes", FindImageLength(decompressed))
+	sysfs.NewKey("sha256", FindImageHash(decompressed))
 	manifest.WriteTo(buffer)
 	return buffer.Bytes()
 }

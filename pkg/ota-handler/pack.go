@@ -189,7 +189,7 @@ func PackOTA() error {
 		return err
 	}
 	fmt.Println("Packing tar...")
-	err = PackTar(encrypted, target, CreateManifest(version, "./tmp/apq8009-robot-sysfs.img", target), version)
+	err = PackTar(encrypted, target, CreateManifest(version, compressed, target), version)
 	if err != nil {
 		return err
 	}
