@@ -16,6 +16,7 @@ func ImplHTTP() {
 	http.HandleFunc("/api/restartvic", ModHTTPHandler)
 
 	http.HandleFunc("/api/mods/custom/TestBootAnim", BootAnim_HTTP)
+	http.HandleFunc("/api/mods/wakeword/", WakeWord_HTTP)
 }
 
 func ModHTTPHandler(w http.ResponseWriter, r *http.Request) {

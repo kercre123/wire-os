@@ -1,0 +1,3 @@
+[submodule "wired/vector-gobot"]
+	path = wired/vector-gobot
+	url = https://github.com/kercre123/vector-gobot

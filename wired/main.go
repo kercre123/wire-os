@@ -10,6 +10,7 @@ import (
 
 var EnabledMods []vars.Modification = []vars.Modification{
 	mods.NewFreqChange(),
+	mods.NewWakeWord(),
 }
 
 func main() {

@@ -134,7 +134,8 @@ func Behavior(behavior string) {
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
-		log.Fatal("dial:", err)
+		fmt.Println("dial:", err)
+		return
 	}
 	defer c.Close()
 
