@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"image/color"
 	"math"
 	"os"
 	"strconv"
@@ -12,9 +13,12 @@ import (
 	"time"
 
 	"github.com/kercre123/vector-gobot/pkg/vbody"
+	"github.com/kercre123/vector-gobot/pkg/vscreen"
 	"github.com/maxhawkins/go-webrtcvad"
 	"github.com/youpy/go-wav"
 )
+
+// writes to the screen, which only works on Vector 1.0.
 
 type AudioChunk struct {
 	Audio  []int16
@@ -31,7 +35,31 @@ var (
 	Recind      int
 )
 
+func DoCountDown() {
+	lines := []vscreen.Line{
+		{
+			Text:  "Index: " + strconv.Itoa(Recind),
+			Color: color.RGBA{255, 255, 255, 255},
+		},
+		{
+			Text:  "Say your wake-word in:",
+			Color: color.RGBA{0, 255, 255, 255},
+		},
+	}
+	for i := 5; i > 0; i-- {
+		linesWithCount := lines
+		linesWithCount = append(linesWithCount, vscreen.Line{
+			Text:  strconv.Itoa(i),
+			Color: color.RGBA{0, 255, 0, 255},
+		})
+		vscreen.SetScreen(vscreen.CreateTextImageFromLines(linesWithCount))
+		time.Sleep(time.Second)
+	}
+}
+
 func InitListener() {
+	vscreen.InitLCD()
+	vscreen.BlackOut()
 	Recind = 1
 	os.RemoveAll("/run/wired/wakeword")
 	os.MkdirAll("/run/wired/wakeword", 0777)
@@ -47,14 +75,17 @@ func InitListener() {
 		panic(err)
 	}
 	vbody.SetLEDs(vbody.LED_OFF, vbody.LED_OFF, vbody.LED_OFF)
+	vscreen.SetScreen(vscreen.CreateTextImage("Ready to start."))
 }
 
 func DoListen() error {
+	DoCountDown()
 	AudioChunks = []AudioChunk{}
 	kill := make(chan bool)
 	var dieListen bool
 	go frameGetter(kill)
-	vbody.SetLEDs(vbody.LED_BLUE, vbody.LED_BLUE, vbody.LED_BLUE)
+	vbody.SetLEDs(0xFFFFFF, 0xFFFFFF, 0xFFFFFF)
+	vscreen.SetScreen(vscreen.CreateTextImage("Listening..."))
 	var timeout int
 	go func() {
 		for {
@@ -66,7 +97,6 @@ func DoListen() error {
 			}
 		}
 	}()
-	fmt.Println("Starting?")
 	for {
 		if dieListen {
 			return errors.New("timeout")
@@ -88,6 +118,7 @@ func DoListen() error {
 			JustDumpAudio(AudioChunks, "/run/wired/wakeword/record"+indInt+".wav")
 			Recind++
 			vbody.SetLEDs(vbody.LED_OFF, vbody.LED_OFF, vbody.LED_OFF)
+			vscreen.SetScreen(vscreen.CreateTextImage("Successful! Ready to start another recording."))
 			break
 		}
 	}
@@ -103,10 +134,11 @@ func JustDumpAudio(cunks []AudioChunk, filepath string) {
 }
 
 func StopListener() {
-	fmt.Println("Stopping spine")
 	Recind = 0
 	AudioChunks = []AudioChunk{}
 	vbody.StopSpine()
+	vscreen.BlackOut()
+	vscreen.StopLCD()
 }
 
 func WriteWAV(audioData []int16, filePath string) error {
@@ -138,7 +170,6 @@ func frameGetter(kill chan bool) {
 	frameChan := vbody.GetFrameChan()
 	for frame := range frameChan {
 		if die {
-			fmt.Println("frame getter is dying")
 			break
 		}
 		smashed := smashPCM(frame.MicData)
@@ -168,7 +199,6 @@ func fillBuf(in []int16) (full []int16, leftover []int16, filled bool) {
 	return nil, micDataBuf, false
 }
 
-// Retrieve the next chunk from the buffer, waiting until it's not nil
 func getNextChunkFromBuffer() []int16 {
 	for {
 		bufferMutex.Lock()
@@ -179,7 +209,7 @@ func getNextChunkFromBuffer() []int16 {
 			return chunk
 		}
 		bufferMutex.Unlock()
-		time.Sleep(5 * time.Millisecond) // wait a bit before checking again to prevent busy-waiting
+		time.Sleep(5 * time.Millisecond)
 	}
 }
 
@@ -196,7 +226,6 @@ func IsDoneSpeaking(chunk320 []byte, chunkInt []int16) bool {
 		Audio:  chunkInt,
 		Active: active,
 	})
-	fmt.Println(active)
 	if active {
 		inactiveCount = 0
 		activeCount++
