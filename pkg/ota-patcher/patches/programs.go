@@ -70,6 +70,15 @@ func AddHtop(version vars.Version, target int) error {
 	return nil
 }
 
+func AddSysSwitch(version vars.Version, target int) error {
+	vars.PatchLogger("Adding sysswitch to /usr/bin")
+	err := cp.Copy(PluginsPath+"AddSysSwitch/sysswitch", WorkPath+"usr/bin/sysswitch")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func AddWired(version vars.Version, target int) error {
 	if target == 3 {
 		vars.PatchLogger("This is an orange build. Not installing wired.")

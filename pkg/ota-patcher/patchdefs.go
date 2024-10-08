@@ -38,6 +38,11 @@ var WireOSPatches []OTAPatch = []OTAPatch{
 		Patch:       patches.AddHtop,
 	},
 	{
+		Name:        "AddSysSwitch",
+		Description: "Adds a system slot switcher called sysswitch.",
+		Patch:       patches.AddSysSwitch,
+	},
+	{
 		Name:        "AddRsync",
 		Description: "Adds rsync, which is helpful for data transfer, to the filesystem.",
 		Patch:       patches.AddRsync,
