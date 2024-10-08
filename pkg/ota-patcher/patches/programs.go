@@ -85,11 +85,12 @@ func AddWired(version vars.Version, target int) error {
 		return nil
 	}
 	vars.PatchLogger("Building wired... this may take a while...")
-	_, err := exec.Command("/bin/bash", "-c", "./wired/build.sh").Output()
-	vars.PatchLogger("Installing wired...")
+	outBuild, err := exec.Command("/bin/bash", "-c", "./wired/build.sh").Output()
 	if err != nil {
+		vars.PatchLogger("Error building: " + string(outBuild))
 		return err
 	}
+	vars.PatchLogger("Installing wired...")
 	err = cp.Copy("./wired/build/wired", WorkPath+"usr/bin/wired")
 	if err != nil {
 		return err
