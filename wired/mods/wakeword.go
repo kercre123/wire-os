@@ -12,10 +12,12 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/kercre123/vector-gobot/pkg/vscreen"
 	"github.com/kercre123/wire-os/wired/vars"
 )
 
 var WakeWordLocation = "/data/data/com.anki.victor/persistent/customWakeWord/wakeword.pmdl"
+var Inited bool
 
 type WakeWord struct {
 	vars.Modification
@@ -50,49 +52,57 @@ func (modu *WakeWord) DefaultJSON() any {
 }
 
 func WakeWord_HTTP(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path == "/api/mods/wakeword/PrepareListener" {
+	if r.URL.Path == "/api/mods/wakeword/StartListener" {
+		DoFreqChange(2)
 		vars.StopVic()
 		InitListener()
+		Inited = true
 		vars.HTTPSuccess(w, r)
 	} else if r.URL.Path == "/api/mods/wakeword/Listen" {
-		err := DoListen()
-		if err != nil {
-			vars.HTTPError(w, r, err.Error())
-		} else {
-			vars.HTTPSuccess(w, r)
-		}
-	} else if r.URL.Path == "/api/mods/wakeword/GenWakeWord" {
-		if Recind >= 3 && Recind <= 20 {
-			if sendWavFilesToServer("/run/wired/wakeword") != nil {
-				vars.HTTPError(w, r, "generation error")
+		if Inited {
+			err := DoListen()
+			if err != nil {
+				vars.HTTPError(w, r, err.Error())
 			} else {
 				vars.HTTPSuccess(w, r)
 			}
-			return
 		} else {
-			vars.HTTPError(w, r, "num not in range")
-			return
+			vars.HTTPError(w, r, "init listener first")
+		}
+	} else if r.URL.Path == "/api/mods/wakeword/GenWakeWord" {
+		if Inited {
+			if Recind >= 3 && Recind <= 20 {
+				err := sendWavFilesToServer("/run/wired/wakeword")
+				if err != nil {
+					vars.HTTPError(w, r, "generation error: "+err.Error())
+				} else {
+					vars.HTTPSuccess(w, r)
+				}
+				return
+			} else {
+				vars.HTTPError(w, r, "num not in range")
+				return
+			}
+		} else {
+			vars.HTTPError(w, r, "init listener first")
+		}
+	} else if r.URL.Path == "/api/mods/wakeword/StartOver" {
+		if Inited {
+			Recind = 1
+			os.RemoveAll("/run/wired/wakeword")
+			os.MkdirAll("/run/wired/wakeword", 0777)
+			vscreen.SetScreen(vscreen.CreateTextImage("Data deleted. Ready to listen."))
+		} else {
+			vars.HTTPError(w, r, "init listener first")
 		}
 	} else if r.URL.Path == "/api/mods/wakeword/StopListener" {
 		StopListener()
+		Inited = false
 		time.Sleep(time.Second)
 		vars.StartVic()
 		vars.HTTPSuccess(w, r)
 	}
 }
-
-// func BootAnim_Show() {
-// 	// show anim on screen for 10 seconds
-// 	cmd := exec.Command("/bin/bash", "-c", "/anki/bin/vic-bootAnim")
-// 	vars.StopVic()
-// 	go func() {
-// 		cmd.Run()
-// 	}()
-// 	time.Sleep(time.Second * 15)
-// 	cmd.Process.Kill()
-// 	time.Sleep(time.Second * 1)
-// 	vars.StartVic()
-// }
 
 func sendWavFilesToServer(dir string) error {
 	files, err := os.ReadDir(dir)
@@ -127,14 +137,15 @@ func sendWavFilesToServer(dir string) error {
 	if err := writer.Close(); err != nil {
 		return fmt.Errorf("could not close writer: %w", err)
 	}
-	resp, err := http.Post("http://pvic.xyz:8080/upload", writer.FormDataContentType(), &requestBody)
+	resp, err := http.Post("https://keriganc.com/wakeword/upload", writer.FormDataContentType(), &requestBody)
 	if err != nil {
 		return fmt.Errorf("could not send post request: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("server returned error: %v", resp.Status)
+		bod, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("server returned error: %v", string(bod))
 	}
 	os.RemoveAll(WakeWordLocation)
 	os.MkdirAll(filepath.Dir(WakeWordLocation), 0777)

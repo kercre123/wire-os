@@ -41,6 +41,23 @@
         <br>
         <button type="button" onclick="BootAnim_Test()">Test boot animation on robot</button>
     </form> -->
+    <h2>CustomWakeWord</h2>
+    <p>Click Start Listener. Once the screen shows "Ready to listen"; click "Listen", wait for the countdown on Vector's screen, then say your desire wake-word. Repeat "Listen" at least 2 more times. Once you are done with that, press GenWakeWord to generate. Once successful, press StopListener.</p>
+    <button onclick="startListener()">
+        Start Listener
+    </button>
+    <button onclick="doListen()">
+        Listen (must do at least 3 times)
+    </button>
+    <button onclick="startWakeWordOver()">
+        StartOver
+    </button>
+    <button onclick="genWakeWord()">
+        GenWakeWord
+    </button>
+    <button onclick="stopListener()">
+        Stop Listener (and start Anki programs)
+    </button>
     </div>
     <div id="showDuringVicRestart">
         <h1>Vector is restarting... please wait</h1>

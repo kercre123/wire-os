@@ -93,6 +93,46 @@ async function RainbowLights_Submit() {
     CheckIfRestartNeeded("RainbowLights");
 }
 
+async function startListener() {
+    document.getElementById('mods').style.display = 'none';
+    SetModStatus("Listener is starting, please wait...")
+    await fetch("/api/mods/wakeword/StartListener")
+    document.getElementById('mods').style.display = 'block';
+    SetModStatus("It worked maybe")
+}
+
+async function doListen() {
+    document.getElementById('mods').style.display = 'none';
+    SetModStatus("Listen request sent... look at Vector")
+    await fetch("/api/mods/wakeword/Listen")
+    document.getElementById('mods').style.display = 'block';
+    SetModStatus("It worked maybe")
+}
+
+async function genWakeWord() {
+    document.getElementById('mods').style.display = 'none';
+    SetModStatus("Generating wake word...")
+    await fetch("/api/mods/wakeword/GenWakeWord")
+    document.getElementById('mods').style.display = 'block';
+    SetModStatus("It worked maybe")
+}
+
+async function startWakeWordOver() {
+    document.getElementById('mods').style.display = 'none';
+    SetModStatus("Deleting data...")
+    await fetch("/api/mods/wakeword/StartOver")
+    document.getElementById('mods').style.display = 'block';
+    SetModStatus("It worked maybe")
+}
+
+async function stopListener() {
+    document.getElementById('mods').style.display = 'none';
+    SetModStatus("Stopping listener and starting Anki...")
+    await fetch("/api/mods/wakeword/StopListener")
+    document.getElementById('mods').style.display = 'block';
+    SetModStatus("It worked maybe")
+}
+
 async function CheckIfRestartNeeded(mod) {
     let response = await fetch('/api/mods/needsrestart/' + mod, {
         method: 'POST',

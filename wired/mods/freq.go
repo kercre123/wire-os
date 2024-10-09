@@ -111,6 +111,13 @@ func (modu *FreqChange) Do(where string, in string) error {
 	if freq < 0 || freq > 2 {
 		return errors.New("freq must be between 0 and 2")
 	}
+	DoFreqChange(freq)
+	modu.Save(where, in)
+	FreqChange_Current = moduin
+	return nil
+}
+
+func DoFreqChange(freq int) {
 	var cpufreq string
 	var ramfreq string
 	var gov string
@@ -138,9 +145,6 @@ func (modu *FreqChange) Do(where string, in string) error {
 	RunCmd("echo active clk2 0 1 max " + ramfreq + " > /sys/kernel/debug/rpm_send_msg/message")
 	RunCmd("echo " + gov + " > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor")
 	RunCmd("echo 1 > /sys/kernel/debug/msm-bus-dbg/shell-client/update_request")
-	modu.Save(where, in)
-	FreqChange_Current = moduin
-	return nil
 }
 
 func RunCmd(cmd string) ([]byte, error) {

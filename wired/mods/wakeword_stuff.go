@@ -5,7 +5,6 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"image/color"
 	"math"
 	"os"
 	"strconv"
@@ -14,6 +13,7 @@ import (
 
 	"github.com/kercre123/vector-gobot/pkg/vbody"
 	"github.com/kercre123/vector-gobot/pkg/vscreen"
+	"github.com/kercre123/wire-os/wired/vars"
 	"github.com/maxhawkins/go-webrtcvad"
 	"github.com/youpy/go-wav"
 )
@@ -36,28 +36,31 @@ var (
 )
 
 func DoCountDown() {
-	lines := []vscreen.Line{
-		{
-			Text:  "Index: " + strconv.Itoa(Recind),
-			Color: color.RGBA{255, 255, 255, 255},
-		},
-		{
-			Text:  "Say your wake-word in:",
-			Color: color.RGBA{0, 255, 255, 255},
-		},
-	}
-	for i := 5; i > 0; i-- {
-		linesWithCount := lines
-		linesWithCount = append(linesWithCount, vscreen.Line{
-			Text:  strconv.Itoa(i),
-			Color: color.RGBA{0, 255, 0, 255},
-		})
-		vscreen.SetScreen(vscreen.CreateTextImageFromLines(linesWithCount))
+	// lines := []vscreen.Line{
+	// 	{
+	// 		Text:  "Index: " + strconv.Itoa(Recind),
+	// 		Color: color.RGBA{255, 255, 255, 255},
+	// 	},
+	// 	{
+	// 		Text:  "Say your wake-word in:",
+	// 		Color: color.RGBA{0, 255, 255, 255},
+	// 	},
+	// }
+	for i := 3; i > 0; i-- {
+		// linesWithCount := lines
+		// linesWithCount = append(linesWithCount, vscreen.Line{
+		// 	Text:  strconv.Itoa(i),
+		// 	Color: color.RGBA{0, 255, 0, 255},
+		// })
+		//vscreen.SetScreen(vscreen.CreateTextImageFromLines(linesWithCount))
+		vscreen.SetScreen(GenerateScreenData(i))
 		time.Sleep(time.Second)
 	}
 }
 
 func InitListener() {
+	// only works when CPU and RAM are above regular, for some reason
+	DoFreqChange(2)
 	vscreen.InitLCD()
 	vscreen.BlackOut()
 	Recind = 1
@@ -75,7 +78,12 @@ func InitListener() {
 		panic(err)
 	}
 	vbody.SetLEDs(vbody.LED_OFF, vbody.LED_OFF, vbody.LED_OFF)
+	vbody.SetMotors(0, 0, -100, -100)
+	time.Sleep(time.Second * 3)
+	vbody.SetMotors(0, 0, 0, 120)
 	vscreen.SetScreen(vscreen.CreateTextImage("Ready to start."))
+	time.Sleep(time.Second * 1)
+	vbody.SetMotors(0, 0, 0, 0)
 }
 
 func DoListen() error {
@@ -107,7 +115,7 @@ func DoListen() error {
 			continue
 		}
 
-		iVoled := increaseVolume(chunk, 17)
+		iVoled := increaseVolume(chunk, 20)
 		var bufBytes []byte
 		binchunk := bytes.NewBuffer(bufBytes)
 		binary.Write(binchunk, binary.LittleEndian, iVoled)
@@ -134,6 +142,12 @@ func JustDumpAudio(cunks []AudioChunk, filepath string) {
 }
 
 func StopListener() {
+	for i, mod := range vars.EnabledMods {
+		if mod.Name() == "FreqChange" {
+			vars.EnabledMods[i].Load()
+			break
+		}
+	}
 	Recind = 0
 	AudioChunks = []AudioChunk{}
 	vbody.StopSpine()
