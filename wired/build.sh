@@ -27,3 +27,5 @@ go build  \
 --trimpath \
 -ldflags '-w -s' \
 -o build/wired
+
+upx build/wired

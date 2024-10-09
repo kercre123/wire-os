@@ -95,6 +95,11 @@ func AddWired(version vars.Version, target int) error {
 	if err != nil {
 		return err
 	}
+	vars.PatchLogger("Installing libvector-gobot.so...")
+	err = cp.Copy("./wired/vector-gobot/build/libvector-gobot.so", WorkPath+"lib/libvector-gobot.so")
+	if err != nil {
+		return err
+	}
 	err = cp.Copy("./wired/wired.service", WorkPath+"etc/systemd/system/multi-user.target.wants/wired.service")
 	if err != nil {
 		return err
