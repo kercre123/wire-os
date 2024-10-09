@@ -93,44 +93,82 @@ async function RainbowLights_Submit() {
     CheckIfRestartNeeded("RainbowLights");
 }
 
-async function startListener() {
-    document.getElementById('mods').style.display = 'none';
-    SetModStatus("Listener is starting, please wait...")
+/* <div id="wakeWordStatus">
+</div>
+<button id="startTraining" onclick="startWakeWordFlow()">
+    Train a new wake word
+</button>
+<button id="wakeWordListen" onclick="doListen()" style="display:none">
+    Listen
+</button>
+<button id="genWakeWord" onclick="genWakeWord()" style="display:none">
+    Generate Wake Word
+</button>
+</div> */
+
+function hide(element) {
+    document.getElementById(element).style.display = 'none';
+}
+
+function show(element) {
+    document.getElementById(element).style.display = 'block';
+}
+
+function setWakeStatus(status) {
+    document.getElementById("wakeWordStatus").innerHTML = ""
+    let stat = document.createElement("p")
+    stat.innerHTML = status
+    document.getElementById("wakeWordStatus").appendChild(stat)
+}
+
+let recIndex = 0
+
+async function startWakeWordFlow() {
+    recIndex = 0
+    hide("startTraining")
+    setWakeStatus("Starting listener... Vector's eyes will go dark.")
     await fetch("/api/mods/wakeword/StartListener")
-    document.getElementById('mods').style.display = 'block';
-    SetModStatus("It worked maybe")
+    show("wakeWordListen")
+    hide("startTraining")
+    setWakeStatus("Listener started. Press 'Listen', wait for the countdown on Vector's screen, then say your wake word to Vector. Do this again at least two more times, then you will be able to click 'Generate Wake Word'.")
 }
 
 async function doListen() {
-    document.getElementById('mods').style.display = 'none';
-    SetModStatus("Listen request sent... look at Vector")
+    setWakeStatus("Listen request sent. Look at Vector's screen!")
+    hide("wakeWordListen")
     await fetch("/api/mods/wakeword/Listen")
-    document.getElementById('mods').style.display = 'block';
-    SetModStatus("It worked maybe")
+    recIndex++
+    show("wakeWordListen")
+    if (recIndex >= 3) {
+        setWakeStatus("You now have three recordings, which means you can generate a wake word. You can create more recordings if you want better accuracy.")
+        show("genWakeWord")
+    } else {
+        setWakeStatus("Press 'Listen', wait for the countdown on Vector's screen, then say your wake word to Vector.<br><br>Recordings made: " + recIndex)
+    }
+    if (recIndex >= 1) {
+        show("startOver")
+    }
 }
 
 async function genWakeWord() {
-    document.getElementById('mods').style.display = 'none';
-    SetModStatus("Generating wake word...")
+    setWakeStatus("Generating wake word...")
+    hide("genWakeWord")
+    hide("wakeWordListen")
+    hide("startOver")
     await fetch("/api/mods/wakeword/GenWakeWord")
-    document.getElementById('mods').style.display = 'block';
-    SetModStatus("It worked maybe")
+    setWakeStatus("Wake word generated and installed. Starting anki programs...")
+    await fetch("/api/mods/wakeword/StopListener")
+    setWakeStatus("Your custom wake word is now implemented.")
+    show("startTraining")
 }
 
 async function startWakeWordOver() {
-    document.getElementById('mods').style.display = 'none';
-    SetModStatus("Deleting data...")
+    setWakeStatus("Deleting data...")
     await fetch("/api/mods/wakeword/StartOver")
-    document.getElementById('mods').style.display = 'block';
-    SetModStatus("It worked maybe")
-}
-
-async function stopListener() {
-    document.getElementById('mods').style.display = 'none';
-    SetModStatus("Stopping listener and starting Anki...")
-    await fetch("/api/mods/wakeword/StopListener")
-    document.getElementById('mods').style.display = 'block';
-    SetModStatus("It worked maybe")
+    hide("genWakeWord")
+    hide("startOver")
+    recIndex = 0
+    setWakeStatus("The recordings have been deleted. Press 'Listen', wait for the countdown on Vector's screen, then say your wake word to Vector.")
 }
 
 async function CheckIfRestartNeeded(mod) {
@@ -143,7 +181,7 @@ async function CheckIfRestartNeeded(mod) {
     }
 }
 
-async function RestartVic() {
+async function RestartVic() { 
     SetModStatus("")
     document.getElementById("restartButton").disabled = true
     document.getElementById('showDuringVicRestart').style.display = 'block';
