@@ -8,6 +8,8 @@ github.com/gorilla/websocket v1.5.0 h1:PPwGk2jz7EePpoHN/+ClbZu8SPxiqlu12wZP/3sWm
 github.com/gorilla/websocket v1.5.0/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/kercre123/vector-gobot v1.2.6 h1:hbm4RdM4vvyBTaY0Z1rl0KNey43kK0VzEioI4FKEAOc=
 github.com/kercre123/vector-gobot v1.2.6/go.mod h1:pyNnNrjiA7vgnb9yU0q4D7jpNKipkdWD9i0NNFTOuvY=
+github.com/kercre123/vector-gobot v1.2.9 h1:oi14JK4qR8o72JcxnFDVnSmL6ripTh2yU1ObUGaZbKM=
+github.com/kercre123/vector-gobot v1.2.9/go.mod h1:pyNnNrjiA7vgnb9yU0q4D7jpNKipkdWD9i0NNFTOuvY=
 github.com/maxhawkins/go-webrtcvad v0.0.0-20210121163624-be60036f3083 h1:0JDcvP4R28p6+u8VIHCwYx7UwiHZ074INz3C397oc9s=
 github.com/maxhawkins/go-webrtcvad v0.0.0-20210121163624-be60036f3083/go.mod h1:YdrZ05xnooeP54y7m+/UvI23O1Td46PjWkLJu1VLObM=
 github.com/otiai10/copy v1.12.0 h1:cLMgSQnXBs1eehF0Wy/FAGsgDTDmAqFR7rQylBb1nDY=

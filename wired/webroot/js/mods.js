@@ -140,12 +140,13 @@ async function startWakeWordFlow() {
 
 async function doListen() {
     setWakeStatus("Listen request sent. Look at Vector's screen!")
+    hide("startOver")
     hide("wakeWordListen")
     await fetch("/api/mods/wakeword/Listen")
     recIndex++
     show("wakeWordListen")
     if (recIndex >= 3) {
-        setWakeStatus("You now have three recordings, which means you can generate a wake word. You can create more recordings if you want better accuracy.")
+        setWakeStatus("You now have three or more recordings, which means you can generate a wake word. You can create more recordings if you want better accuracy.<br><br>Recordings made: " + recIndex)
         show("genWakeWord")
     } else {
         setWakeStatus("Press 'Listen', wait for the countdown on Vector's screen, then say your wake word to Vector.<br><br>Recordings made: " + recIndex)
