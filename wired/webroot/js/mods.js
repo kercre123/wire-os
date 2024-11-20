@@ -54,7 +54,12 @@ function SetModStatus(message) {
     statusDiv = document.getElementById('modStatus')
     statusMsg.textContent = message
     statusDiv.innerHTML = ""
+    document.getElementById('modStatus').style.display = 'block';
     statusDiv.appendChild(statusMsg)
+}
+
+function HideModStatus() {
+    document.getElementById('modStatus').style.display = 'none';
 }
 
 async function SendJSON(mod, json) {
@@ -71,10 +76,10 @@ async function SendJSON(mod, json) {
     UpdateAllMods(data)
     if (data.status == "success") {
         document.getElementById('mods').style.display = 'block';
-        SetModStatus(mod + " applied successfully!")
+        HideModStatus()
     } else {
         document.getElementById('mods').style.display = 'block';
-        SetModStatus(mod + " application error: " + data.message)
+        HideModStatus()
     }
     return data;
 }

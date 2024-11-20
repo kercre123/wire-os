@@ -1,70 +1,157 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mods</title>
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        header,
+        .container {
+            text-align: center;
+            padding: 20px;
+            width: 80%;
+            max-width: 600px;
+            background-color: #333;
+            border-radius: 10px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5);
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        h2 {
+            margin-top: 20px;
+            color: #a855f7;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input[type="radio"],
+        input[type="checkbox"] {
+            display: none;
+        }
+
+        label {
+            display: inline-block;
+            padding: 10px;
+            border: 2px solid #444;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        input[type="radio"]:checked+label,
+        input[type="checkbox"]:checked+label {
+            background-color: #a855f7;
+            border-color: #9d4edd;
+            color: #1e1e1e;
+        }
+
+        label:hover {
+            background-color: #444;
+        }
+
+        button {
+            background-color: #a855f7;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #9d4edd;
+        }
+
+        #restartButton {
+            margin-top: 10px;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background-color: #444;
+            width: 80%;
+            margin: 20px 0;
+        }
+
+        .mod-section {
+            margin-bottom: 20px;
+        }
+
+        #mods button,
+        #wakeWordStatus+button {
+            display: inline-block;
+            margin: 10px auto;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
 </head>
+
 <body>
     <header>
-        <h1>wire_d test mods</h1>
+        <h1>WireOS Settings</h1>
     </header>
-    <hr>
-    <div id="modStatus"></div>
-    <div id="mods">
-    <h2>FreqChange</h2>
-    <form>
-        <input type="radio" id="regular" name="frequency" value="0">
-        <label for="regular">Regular</label><br>
-        <input type="radio" id="balanced" name="frequency" value="1">
-        <label for="balanced">Balanced</label><br>
-        <input type="radio" id="performance" name="frequency" value="2">
-        <label for="performance">Performance</label><br>
-        <button type="button" onclick="FreqChange_Submit()">Submit</button>
-    </form>
-    <!-- <h2>RainbowLights</h2>
-    <form>
-        <input type="radio" id="disabled" name="rainbowlights" value="false">
-        <label for="disabled">Disabled</label><br>
-        <input type="radio" id="enabled" name="rainbowlights" value="true">
-        <label for="enabled">Enabled</label><br>
-        <button type="button" onclick="RainbowLights_Submit()">Submit</button>
-    </form>
-    <h2>BootAnim</h2>
-    <form>
-        <div id="bootAnimCurrent"></div>
-        <input type="checkbox" id="bootAnimDefault" onclick="bootAnimCheckValidate()">
-        <label for="bootAnimDefault">Use default WireOS boot animation</label><br>
-        <div id="bootAnimUploadHide">
-            <input type="file" id="bootAnimUpload" accept="image/gif">
+    <div class="container mod-section">
+        <div id="modStatus"></div>
+        <div id="mods">
+            <h2>Performance Profiles</h2>
+            <p>Brings noticably better SDK performance, but may cause overheating.</p>
+            <form>
+                <input type="radio" id="regular" name="frequency" value="0" onchange="FreqChange_Submit()">
+                <label for="regular">Regular</label>
+                <input type="radio" id="balanced" name="frequency" value="1" onchange="FreqChange_Submit()">
+                <label for="balanced">Balanced</label>
+                <input type="radio" id="performance" name="frequency" value="2" onchange="FreqChange_Submit()">
+                <label for="performance">Performance</label>
+            </form>
         </div>
-        <br>
-        <button type="button" onclick="BootAnim_Submit()">Submit</button>
-        <br>
-        <button type="button" onclick="BootAnim_Test()">Test boot animation on robot</button>
-    </form> -->
-    <h2>CustomWakeWord</h2>
-    <div id="wakeWordStatus">
     </div>
-    <button id="startTraining" onclick="startWakeWordFlow()">
-        Train a new wake word
-    </button>
-    <button id="wakeWordListen" onclick="doListen()" style="display:none">
-        Listen
-    </button>
-    <button id="startOver" onclick="startWakeWordOver()" style="display:none">
-        Start Over
-    </button>
-    <button id="genWakeWord" onclick="genWakeWord()" style="display:none">
-        Generate Wake Word
-    </button>
+    <!-- just completely break the "mods" div convention i had because this is different -->
+    <div class="container mod-section">
+        <h2>Custom Wake Word</h2>
+        <div id="wakeWordStatus"></div>
+        <div class="button-container">
+            <button id="startTraining" onclick="startWakeWordFlow()">Train a new wake word</button>
+            <button id="wakeWordListen" onclick="doListen()" style="display:none">Listen</button>
+            <button id="startOver" onclick="startWakeWordOver()" style="display:none">Start Over</button>
+            <button id="genWakeWord" onclick="genWakeWord()" style="display:none">Generate Wake Word</button>
+        </div>
     </div>
-    <div id="showDuringVicRestart">
+    <div id="showDuringVicRestart" class="container" style="display: none;">
         <h1>Vector is restarting... please wait</h1>
     </div>
-    <div id="restartNeeded">
+    <div id="restartNeeded" class="container" style="display: none;">
         <h2>A vic restart is required for changes to take affect.</h2>
         <input type="button" value="Restart" id="restartButton" onclick="RestartVic()">
     </div>
-    <hr>
     <script src="js/mods.js"></script>
 </body>
+
 </html>
