@@ -1,2 +1,0 @@
-/bin/taskset
-/usr/lib/busybox/bin/taskset 50

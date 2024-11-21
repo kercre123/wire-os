@@ -1,2 +1,0 @@
-/bin/renice
-/usr/lib/busybox/bin/renice 50
