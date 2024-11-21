@@ -1,0 +1,2 @@
+/sbin/swapon
+/usr/lib/busybox/sbin/swapon 50

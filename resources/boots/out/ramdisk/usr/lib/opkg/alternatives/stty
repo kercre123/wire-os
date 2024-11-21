@@ -1,0 +1,2 @@
+/bin/stty
+/usr/lib/busybox/bin/stty 50

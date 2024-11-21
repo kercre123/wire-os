@@ -1,0 +1,2 @@
+/sbin/slattach
+/usr/lib/busybox/sbin/slattach 50

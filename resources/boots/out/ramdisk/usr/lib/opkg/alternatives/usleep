@@ -1,0 +1,2 @@
+/bin/usleep
+/usr/lib/busybox/bin/usleep 50

@@ -1,0 +1,2 @@
+/bin/pkill
+/usr/lib/busybox/bin/pkill 50

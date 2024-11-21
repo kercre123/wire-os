@@ -1,0 +1,2 @@
+/bin/lzopcat
+/usr/lib/busybox/bin/lzopcat 50

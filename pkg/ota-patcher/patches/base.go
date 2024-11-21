@@ -140,7 +140,7 @@ func PatchMountData(version vars.Version, target int) error {
 	} else {
 		patchedMountSuffix = "-norm"
 	}
-	vars.PatchLogger("Copying fstab")
+	vars.PatchLogger("Copying mount-data")
 	os.Remove(WorkPath + "etc/initscripts/mount-data")
 	err := cp.Copy("./resources/patches/PatchMountData/mount-data"+patchedMountSuffix, WorkPath+"etc/initscripts/mount-data")
 	if err != nil {

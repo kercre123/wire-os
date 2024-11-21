@@ -1,0 +1,2 @@
+/sbin/ifup
+/usr/lib/busybox/sbin/ifup 50

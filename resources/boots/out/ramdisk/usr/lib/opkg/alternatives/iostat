@@ -1,0 +1,2 @@
+/bin/iostat
+/usr/lib/busybox/bin/iostat 50

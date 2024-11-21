@@ -1,0 +1,2 @@
+/bin/mktemp
+/usr/lib/busybox/bin/mktemp 50

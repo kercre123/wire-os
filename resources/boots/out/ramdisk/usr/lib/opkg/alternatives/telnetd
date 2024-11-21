@@ -1,0 +1,2 @@
+/sbin/telnetd
+/usr/lib/busybox/sbin/telnetd 50

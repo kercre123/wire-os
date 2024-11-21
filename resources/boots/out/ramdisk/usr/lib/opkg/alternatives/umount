@@ -1,0 +1,2 @@
+/bin/umount
+/usr/lib/busybox/bin/umount 50

@@ -1,0 +1,2 @@
+/bin/netstat
+/usr/lib/busybox/bin/netstat 50

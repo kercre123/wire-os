@@ -1,0 +1,2 @@
+/sbin/switch_root
+/usr/lib/busybox/sbin/switch_root 50

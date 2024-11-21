@@ -1,0 +1,2 @@
+/bin/lzcat
+/usr/lib/busybox/bin/lzcat 50

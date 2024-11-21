@@ -1,0 +1,2 @@
+/bin/dmesg
+/usr/lib/busybox/bin/dmesg 50

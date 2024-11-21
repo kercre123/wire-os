@@ -1,0 +1,2 @@
+/bin/df
+/usr/lib/busybox/bin/df 50

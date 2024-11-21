@@ -1,0 +1,2 @@
+/sbin/deluser
+/usr/lib/busybox/sbin/deluser 50

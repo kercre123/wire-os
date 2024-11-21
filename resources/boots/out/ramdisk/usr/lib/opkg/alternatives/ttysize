@@ -1,0 +1,2 @@
+/bin/ttysize
+/usr/lib/busybox/bin/ttysize 50

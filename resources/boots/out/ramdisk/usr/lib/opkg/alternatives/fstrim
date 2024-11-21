@@ -1,0 +1,2 @@
+/sbin/fstrim
+/usr/lib/busybox/sbin/fstrim 50

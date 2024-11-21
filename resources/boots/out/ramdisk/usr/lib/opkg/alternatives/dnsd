@@ -1,0 +1,2 @@
+/sbin/dnsd
+/usr/lib/busybox/sbin/dnsd 50

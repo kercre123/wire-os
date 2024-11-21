@@ -1,0 +1,2 @@
+/bin/pidof
+/usr/lib/busybox/bin/pidof 50

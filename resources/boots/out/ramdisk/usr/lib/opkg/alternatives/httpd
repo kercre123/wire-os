@@ -1,0 +1,2 @@
+/sbin/httpd
+/usr/lib/busybox/sbin/httpd 50

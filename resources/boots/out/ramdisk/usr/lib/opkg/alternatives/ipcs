@@ -1,0 +1,2 @@
+/bin/ipcs
+/usr/lib/busybox/bin/ipcs 50

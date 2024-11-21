@@ -1,0 +1,2 @@
+/sbin/tftpd
+/usr/lib/busybox/sbin/tftpd 50

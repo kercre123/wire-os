@@ -1,0 +1,2 @@
+/bin/sha512sum
+/usr/lib/busybox/bin/sha512sum 50

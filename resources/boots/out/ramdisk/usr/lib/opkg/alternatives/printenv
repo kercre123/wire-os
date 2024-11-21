@@ -1,0 +1,2 @@
+/bin/printenv
+/usr/lib/busybox/bin/printenv 50

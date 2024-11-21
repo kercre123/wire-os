@@ -1,0 +1,2 @@
+/sbin/modprobe
+/usr/lib/busybox/sbin/modprobe 50

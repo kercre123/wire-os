@@ -1,0 +1,2 @@
+/bin/beep
+/usr/lib/busybox/bin/beep 50

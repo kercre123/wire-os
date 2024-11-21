@@ -1,0 +1,2 @@
+/sbin/init
+/usr/lib/busybox/sbin/init 50

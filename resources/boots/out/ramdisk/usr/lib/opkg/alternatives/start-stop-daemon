@@ -1,0 +1,2 @@
+/sbin/start-stop-daemon
+/usr/lib/busybox/sbin/start-stop-daemon 50

@@ -1,0 +1,2 @@
+/sbin/udhcpc
+/usr/lib/busybox/sbin/udhcpc 50

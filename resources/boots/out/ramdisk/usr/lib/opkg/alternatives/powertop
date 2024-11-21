@@ -1,0 +1,2 @@
+/sbin/powertop
+/usr/lib/busybox/sbin/powertop 50

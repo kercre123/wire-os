@@ -1,0 +1,2 @@
+/sbin/inetd
+/usr/lib/busybox/sbin/inetd 50

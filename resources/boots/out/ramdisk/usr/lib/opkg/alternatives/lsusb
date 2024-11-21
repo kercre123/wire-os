@@ -1,0 +1,2 @@
+/bin/lsusb
+/usr/lib/busybox/bin/lsusb 50

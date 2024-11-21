@@ -1,0 +1,2 @@
+/sbin/logread
+/usr/lib/busybox/sbin/logread 50

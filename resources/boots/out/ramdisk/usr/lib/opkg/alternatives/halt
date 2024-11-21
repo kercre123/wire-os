@@ -1,0 +1,2 @@
+/sbin/halt
+/usr/lib/busybox/sbin/halt 50

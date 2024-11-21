@@ -1,0 +1,2 @@
+/sbin/crond
+/usr/lib/busybox/sbin/crond 50

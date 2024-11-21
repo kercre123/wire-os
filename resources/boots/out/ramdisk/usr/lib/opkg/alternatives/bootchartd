@@ -1,0 +1,2 @@
+/sbin/bootchartd
+/usr/lib/busybox/sbin/bootchartd 50

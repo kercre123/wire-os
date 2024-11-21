@@ -1,0 +1,2 @@
+/bin/sync
+/usr/lib/busybox/bin/sync 50

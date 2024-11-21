@@ -1,0 +1,2 @@
+/sbin/ifdown
+/usr/lib/busybox/sbin/ifdown 50

@@ -1,0 +1,2 @@
+/bin/mknod
+/usr/lib/busybox/bin/mknod 50

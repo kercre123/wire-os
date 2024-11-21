@@ -1,0 +1,2 @@
+/bin/softlimit
+/usr/lib/busybox/bin/softlimit 50

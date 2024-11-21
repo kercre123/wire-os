@@ -1,0 +1,2 @@
+/bin/killall
+/usr/lib/busybox/bin/killall 50

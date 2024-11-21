@@ -1,0 +1,2 @@
+/sbin/ifenslave
+/usr/lib/busybox/sbin/ifenslave 50

@@ -1,0 +1,2 @@
+/sbin/ntpd
+/usr/lib/busybox/sbin/ntpd 50

@@ -1,0 +1,2 @@
+/sbin/killall5
+/usr/lib/busybox/sbin/killall5 50

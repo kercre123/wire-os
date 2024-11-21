@@ -1,0 +1,2 @@
+/sbin/readahead
+/usr/lib/busybox/sbin/readahead 50

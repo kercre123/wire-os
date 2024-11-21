@@ -1,0 +1,2 @@
+/sbin/poweroff
+/usr/lib/busybox/sbin/poweroff 50

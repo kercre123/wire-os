@@ -1,0 +1,2 @@
+/sbin/pivot_root
+/usr/lib/busybox/sbin/pivot_root 50

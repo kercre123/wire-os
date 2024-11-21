@@ -1,0 +1,2 @@
+/bin/chown
+/usr/lib/busybox/bin/chown 50

@@ -1,0 +1,2 @@
+/sbin/reboot
+/usr/lib/busybox/sbin/reboot 50

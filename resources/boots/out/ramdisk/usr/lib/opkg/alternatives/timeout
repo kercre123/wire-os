@@ -1,0 +1,2 @@
+/bin/timeout
+/usr/lib/busybox/bin/timeout 50

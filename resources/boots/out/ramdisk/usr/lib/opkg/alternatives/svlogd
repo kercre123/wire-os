@@ -1,0 +1,2 @@
+/sbin/svlogd
+/usr/lib/busybox/sbin/svlogd 50

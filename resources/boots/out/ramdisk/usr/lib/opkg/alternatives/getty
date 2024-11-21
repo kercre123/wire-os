@@ -1,0 +1,2 @@
+/sbin/getty
+/usr/lib/busybox/sbin/getty 50

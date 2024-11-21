@@ -1,0 +1,2 @@
+/bin/mkpasswd
+/usr/lib/busybox/bin/mkpasswd 50

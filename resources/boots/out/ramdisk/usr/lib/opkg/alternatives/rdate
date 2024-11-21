@@ -1,0 +1,2 @@
+/sbin/rdate
+/usr/lib/busybox/sbin/rdate 50

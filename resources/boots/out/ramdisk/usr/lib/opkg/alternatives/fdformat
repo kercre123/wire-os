@@ -1,0 +1,2 @@
+/sbin/fdformat
+/usr/lib/busybox/sbin/fdformat 50

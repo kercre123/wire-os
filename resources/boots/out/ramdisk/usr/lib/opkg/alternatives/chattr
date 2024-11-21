@@ -1,0 +1,2 @@
+/bin/chattr
+/usr/lib/busybox/bin/chattr 50

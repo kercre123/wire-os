@@ -1,0 +1,2 @@
+/sbin/rtcwake
+/usr/lib/busybox/sbin/rtcwake 50

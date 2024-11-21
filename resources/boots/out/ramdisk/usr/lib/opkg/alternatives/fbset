@@ -1,0 +1,2 @@
+/sbin/fbset
+/usr/lib/busybox/sbin/fbset 50

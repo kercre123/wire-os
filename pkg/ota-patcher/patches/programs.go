@@ -80,10 +80,10 @@ func AddSysSwitch(version vars.Version, target int) error {
 }
 
 func AddWired(version vars.Version, target int) error {
-	if target == 3 {
-		vars.PatchLogger("This is an orange build. Not installing wired.")
-		return nil
-	}
+	//if target == 3 {
+	//	vars.PatchLogger("This is an orange build. Not installing wired.")
+	//	return nil
+	//}
 	vars.PatchLogger("Building wired... this may take a while...")
 	outBuild, err := exec.Command("/bin/bash", "-c", "./wired/build.sh").Output()
 	if err != nil {

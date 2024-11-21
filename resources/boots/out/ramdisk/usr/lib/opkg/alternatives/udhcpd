@@ -1,0 +1,2 @@
+/sbin/udhcpd
+/usr/lib/busybox/sbin/udhcpd 50

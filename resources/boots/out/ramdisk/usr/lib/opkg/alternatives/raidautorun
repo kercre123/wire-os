@@ -1,0 +1,2 @@
+/sbin/raidautorun
+/usr/lib/busybox/sbin/raidautorun 50

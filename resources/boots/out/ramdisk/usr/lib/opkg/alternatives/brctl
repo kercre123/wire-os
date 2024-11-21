@@ -1,0 +1,2 @@
+/sbin/brctl
+/usr/lib/busybox/sbin/brctl 50

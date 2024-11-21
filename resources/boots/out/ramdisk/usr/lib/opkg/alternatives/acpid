@@ -1,0 +1,2 @@
+/sbin/acpid
+/usr/lib/busybox/sbin/acpid 50

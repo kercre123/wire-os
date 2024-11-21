@@ -1,0 +1,2 @@
+/sbin/setconsole
+/usr/lib/busybox/sbin/setconsole 50

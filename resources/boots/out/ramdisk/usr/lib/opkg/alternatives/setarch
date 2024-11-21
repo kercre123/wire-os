@@ -1,0 +1,2 @@
+/bin/setarch
+/usr/lib/busybox/bin/setarch 50

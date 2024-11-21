@@ -1,0 +1,2 @@
+/sbin/devmem
+/usr/lib/busybox/sbin/devmem 50
