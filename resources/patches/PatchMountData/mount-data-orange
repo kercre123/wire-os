@@ -27,6 +27,7 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+ROBOT_KEY=/data/etc/robot.pem
 UNBRICK_KEY="anki.unbrick"
 WIPE_COOKIE="/run/wipe-data"
 TOM_LOG="/factory/log1"
@@ -34,16 +35,44 @@ CONNMAN_DONE_TOKEN=/data/lib/connman/.mount-data
 
 
 make_userdata() {
+  if $1; then
+    echo "Remaking /data" > /dev/kmsg
+    mkfs.ext4 /dev/block/bootdevice/by-name/userdata
+    mount /data
+  fi
   # This doesn't really seem to belong in this script but the usb service is using this directory's existance to
   # determine that /data is mounted and it isn't well integrated into systemd so making it here is the easiest way
   # to make it work.
   mkdir -p /data/usb
   mkdir -p /data/misc/camera
+  mkdir -p /data/data/com.anki.victor
+  chown -R anki:anki /data/data/com.anki.victor
+  chmod -R 770 /data/data/com.anki.victor
+  #vic-gateway
+  mkdir -p /data/vic-gateway
+  chown -R net:anki /data/vic-gateway
+  chmod -R 770 /data/vic-gateway
+  #bluetooth
   mkdir -p /data/misc/bluetooth
+  chown -R bluetooth:bluetooth /data/misc/bluetooth
+  chmod -R 770 /data/misc/bluetooth
+  #panics
+  mkdir -p /data/panics
+  chown -R anki:anki /data/panics
+  chmod -R 770 /data/panics
+
+  #make sure /data/run/connman exists - NOTE: we need /data/lib/connman and /data/run/connamn
+  mkdir -p /data/run/connman
   if [ ! -e $CONNMAN_DONE_TOKEN ]; then
     mkdir -p /data/lib/connman/
     cp -rf /var/lib/connman/* /data/lib/connman
     touch $CONNMAN_DONE_TOKEN
+  fi
+  if [ ! -f $ROBOT_KEY ]; then
+    mkdir -p /data/etc
+    openssl genrsa -out $ROBOT_KEY 2048
+    chown net:anki $ROBOT_KEY
+    chmod 440 $ROBOT_KEY
   fi
 }
 
@@ -58,7 +87,13 @@ make_tomlog() {
 
 case "$1" in
   start )
-    make_userdata
+    mount /data
+    mounted=$?
+    if [ $mounted -ne 0 ]; then
+        make_userdata true
+    else
+        make_userdata false
+    fi
     PACKOUT_FLAG=`/bin/emr-cat o`
     if [ $? -eq 0 ]; then # If we can't test the packout flag we don't want to risk remounting
       if [ $PACKOUT_FLAG -eq 00000000 ]; then # If packout flag is not set
