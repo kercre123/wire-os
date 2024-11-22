@@ -149,6 +149,16 @@ func PatchMountData(version vars.Version, target int) error {
 	return nil
 }
 
+func HigherPriorityAnim(version vars.Version, target int) error {
+	vars.PatchLogger("Copying new vic-anim service file")
+	os.Remove(WorkPath + "lib/systemd/system/vic-anim.service")
+	err := cp.Copy("./resources/patches/HigherPriorityAnim/vic-anim.service", WorkPath+"lib/systemd/system/vic-anim.service")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func AddSSHKey(version vars.Version, target int) error {
 	if _, err := os.Stat(WorkPath + "etc/init.d/localsshuser.sh"); err == nil {
 		os.Remove(WorkPath + "etc/init.d/localsshuser.sh")

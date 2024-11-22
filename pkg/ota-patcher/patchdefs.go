@@ -53,6 +53,11 @@ var WireOSPatches []OTAPatch = []OTAPatch{
 		Patch:       patches.UpCPUFreq,
 	},
 	{
+		Name:        "HigherPriorityAnim",
+		Description: "Gives vic-anim higher priority for smoother sprite sequences.",
+		Patch:       patches.HigherPriorityAnim,
+	},
+	{
 		Name:        "PatchMountData",
 		Description: "Mounts /data with exec perms",
 		Patch:       patches.PatchMountData,
