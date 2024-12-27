@@ -8,8 +8,8 @@ import (
 )
 
 func RunPatches(version vars.Version, target int) error {
-	if target < 0 || target > 4 {
-		return errors.New("target must be between 0 and 4")
+	if target < 0 || target > 5 {
+		return errors.New("target must be between 0 and 5")
 	}
 	if !vars.IsMounted() {
 		return errors.New("image is not mounted")

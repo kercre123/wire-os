@@ -77,7 +77,7 @@ func UnmountImage(path string) error {
 func PackTar(systembytes []byte, target int, manifest []byte, version vars.Version) error {
 	// 0 = dev, 1 = whiskey, 2 = oskr, 3 = orange(fills a very specific niche of bot)
 	var buf []byte
-	if target > 4 || target < 0 {
+	if target > 5 || target < 0 {
 		return errors.New("target out of range, must be between 1 and 4")
 	}
 	bootbytes, err := os.ReadFile("./resources/boots/" + vars.Targets[target] + ".img.gz")

@@ -55,7 +55,7 @@ func main() {
 
 	patchCmd := flag.NewFlagSet("patch", flag.ExitOnError)
 	patchOutput := patchCmd.String("output", "", "Desired output version (e.g., 1.6.0.3331.ota)")
-	patchTarget := patchCmd.Int("target", -1, "Desired target (0-3)")
+	patchTarget := patchCmd.Int("target", -1, "Desired target (0-5)")
 
 	listCmd := flag.NewFlagSet("list", flag.ExitOnError)
 
@@ -140,7 +140,7 @@ func main() {
 	case "patch":
 		patchCmd.Parse(os.Args[2:])
 		if *patchOutput == "" || *patchTarget == -1 {
-			fmt.Println("Usage: patch -output=<output OTA version> -target=<0-4>")
+			fmt.Println("Usage: patch -output=<output OTA version> -target=<0-5>")
 			os.Exit(1)
 		}
 		version, err := manager.SplitVersion(*patchOutput)
@@ -148,8 +148,8 @@ func main() {
 			fmt.Printf("Error: %v\n", err)
 			os.Exit(1)
 		}
-		if *patchTarget < 0 || *patchTarget > 4 {
-			fmt.Println("Error: target must be between 0 and 4")
+		if *patchTarget < 0 || *patchTarget > 5 {
+			fmt.Println("Error: target must be between 0 and 5")
 			os.Exit(1)
 		}
 		fmt.Println("Running patches...")
@@ -210,6 +210,7 @@ func main() {
 		fmt.Println("  2 = oskr")
 		fmt.Println("  3 = orange")
 		fmt.Println("  4 = dvt3")
+		fmt.Println("  5 = dvt2")
 
 	default:
 		fmt.Printf("Unknown subcommand: %s\n", os.Args[1])
