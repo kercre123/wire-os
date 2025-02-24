@@ -58,7 +58,7 @@ func AddVersion(version vars.Version, target int) error {
 	customProps = append(customProps, "ro.revision=wire_os")
 	customProps = append(customProps, "ro.anki.version="+version.Full+verAppendage)
 	customProps = append(customProps, "ro.anki.victor.version="+version.Full)
-	customProps = append(customProps, "ro.build.fingerprint=v"+version.Full+"-wire_os"+version.Full+"-"+verAppendage+"-"+formattedTime)
+	customProps = append(customProps, "ro.build.fingerprint="+version.Full+"-wire_os"+version.Full+"-"+verAppendage+"-"+formattedTime)
 	customProps = append(customProps, "ro.build.id=v"+version.Full+"-wire_os"+version.Full+"-"+verAppendage+"-"+formattedTime)
 	customProps = append(customProps, "ro.build.display.id=v"+version.Full+vars.Targets[target])
 	customProps = append(customProps, "ro.build.target="+strconv.Itoa(target))
