@@ -1,3 +1,5 @@
+# You are probably looking for [os-vector/wire-os](https://github.com/os-vector/wire-os)
+
 # wire-os
 
 -	This is a Go program which will eventually be able to download any OTA, apply patches to it, and pack it to be able to download onto any target (production bots are not supported. only oskr/dev/whiskey).
